@@ -1,6 +1,6 @@
 const pigpio = require('pigpio-client')().then((pi) => {
-  const TRIG = 23;
-  const ECHO = 24;
+  const TRIG = 2;
+  const ECHO = 4;
 
   pi.gpio(TRIG).modeSet('output');
   pi.gpio(ECHO).modeSet('input');
