@@ -1,26 +1,28 @@
 const pigpio = require('pigpio-client')().then((pi) => {
-  const TRIG = 2;
-  const ECHO = 4;
+  const TRIGEVEN = 2;
+  const ECHOEVEN = 4;
+  const TRIGODD = 1;
+  const ECHOODD = 3;
 
-  pi.gpio(TRIG).modeSet('output');
-  pi.gpio(ECHO).modeSet('input');
+  pi.gpio(TRIGEVEN).modeSet('output');
+  pi.gpio(ECHOEVEN).modeSet('input');
 
   console.log('Distance measurement is in progress...');
 
-  pi.gpio(TRIG).digitalWrite(0);
+  pi.gpio(TRIGEVEN).digitalWrite(0);
   console.log('Sensor settles');
   setTimeout(() => {
-    pi.gpio(TRIG).digitalWrite(1);
+    pi.gpio(TRIGEVEN).digitalWrite(1);
     setTimeout(() => {
-      pi.gpio(TRIG).digitalWrite(0);
+      pi.gpio(TRIGEVEN).digitalWrite(0);
 
       let pulseStart;
-      while (pi.gpio(ECHO).digitalRead() === 0) {
+      while (pi.gpio(ECHOEVEN).digitalRead() === 0) {
         pulseStart = process.hrtime.bigint();
       }
 
       let pulseEnd;
-      while (pi.gpio(ECHO).digitalRead() === 1) {
+      while (pi.gpio(ECHOEVEN).digitalRead() === 1) {
         pulseEnd = process.hrtime.bigint();
       }
 
