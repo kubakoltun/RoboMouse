@@ -4,10 +4,10 @@ import time
 
 GPIO.setmode(gpio.BCM)
 GPIO.setwarnings(False)
-TRIGEVEN = 2;
-ECHOEVEN = 4;
-TRIGODD = 1;
-ECHOODD = 3;
+TRIGEVEN = 29;
+ECHOEVEN = 31;
+TRIGODD = 33;
+ECHOODD = 35;
 print("Distance mesurement is in progress...")
 GPIO.setup(TRIGEVEN, GPIO.OUT)
 GPIO.setup(ECHOEVEN, GPIO.IN)
