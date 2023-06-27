@@ -3,10 +3,10 @@ const board = new Board();
 
 board.on('ready', () => {
   // Define the GPIO pins for the wheels
-  const leftWheelPin1 = new Led(7);
-  const leftWheelPin2 = new Led(9);
-  const rightWheelPin1 = new Led(8);
-  const rightWheelPin2 = new Led(10);
+  const leftWheelPin1 = new Led(15);
+  const leftWheelPin2 = new Led(17);
+  const rightWheelPin1 = new Led(16);
+  const rightWheelPin2 = new Led(18);
 
   // Function to move forward
   function moveForward() {
