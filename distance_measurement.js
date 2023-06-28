@@ -1,8 +1,8 @@
 const pigpio = require('pigpio-client')().then((pi) => {
-  const TRIGEVEN = 2;
-  const ECHOEVEN = 4;
-  const TRIGODD = 1;
-  const ECHOODD = 3;
+  const TRIGEVEN = 29;
+  const ECHOEVEN = 31;
+  const TRIGODD = 33;
+  const ECHOODD = 35;
 
   pi.gpio(TRIGEVEN).modeSet('output');
   pi.gpio(ECHOEVEN).modeSet('input');
