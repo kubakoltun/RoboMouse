@@ -6,8 +6,8 @@ import time
 GPIO.setmode(GPIO.BCM)
 
 # Define the GPIO pins for the wheels
-left_wheel_pin1 = 15
-left_wheel_pin2 = 17
+left_wheel_pin1 = 13
+left_wheel_pin2 = 15
 right_wheel_pin1 = 16
 right_wheel_pin2 = 18
 
