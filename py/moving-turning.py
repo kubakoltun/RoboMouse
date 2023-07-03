@@ -1,73 +1,83 @@
 import RPi.GPIO as GPIO
-import time
+from time import sleep
 
 
-# Set the GPIO mode
+# right wheel
+in1A = 24
+in2A = 23
+enA = 25
+# left wheel
+in3B = 17
+in4B = 27
+enB = 22
+
+
 GPIO.setmode(GPIO.BCM)
 
-# Define the GPIO pins for the wheels
-left_wheel_pin1 = 13
-left_wheel_pin2 = 15
-right_wheel_pin1 = 16
-right_wheel_pin2 = 18
+GPIO.setup(in1A, GPIO.OUT)
+GPIO.setup(in2A, GPIO.OUT)
+GPIO.setup(enA, GPIO.OUT)
+GPIO.output(in1A, GPIO.LOW)
+GPIO.output(in2A, GPIO.LOW)
 
-# Set the GPIO pins as output
-GPIO.setup(left_wheel_pin1, GPIO.OUT)
-GPIO.setup(left_wheel_pin2, GPIO.OUT)
-GPIO.setup(right_wheel_pin1, GPIO.OUT)
-GPIO.setup(right_wheel_pin2, GPIO.OUT)
+GPIO.setup(in3B, GPIO.OUT)
+GPIO.setup(in4B, GPIO.OUT)
+GPIO.setup(enB, GPIO.OUT)
+GPIO.output(in3B, GPIO.LOW)
+GPIO.output(in4B, GPIO.LOW)
 
-# Function to move forward
+pA = GPIO.PWM(enA, 1000)
+pA.start(25)
+pB = GPIO.PWM(enB, 1000)
+pB.start(25)
+
+
 def move_forward():
-    GPIO.output(left_wheel_pin1, GPIO.HIGH)
-    GPIO.output(left_wheel_pin2, GPIO.LOW)
-    GPIO.output(right_wheel_pin1, GPIO.HIGH)
-    GPIO.output(right_wheel_pin2, GPIO.LOW)
-
-# Function to move backward
+    GPIO.output(in1A, GPIO.HIGH)
+    GPIO.output(in2A, GPIO.LOW)
+    GPIO.output(in3B, GPIO.HIGH)
+    GPIO.output(in4B, GPIO.LOW)
+    
 def move_backward():
-    GPIO.output(left_wheel_pin1, GPIO.LOW)
-    GPIO.output(left_wheel_pin2, GPIO.HIGH)
-    GPIO.output(right_wheel_pin1, GPIO.LOW)
-    GPIO.output(right_wheel_pin2, GPIO.HIGH)
-
-# Function to make a left turn
+    GPIO.output(in1A, GPIO.LOW)
+    GPIO.output(in2A, GPIO.HIGH)
+    GPIO.output(in3B, GPIO.LOW)
+    GPIO.output(in4B, GPIO.HIGH)
+    
 def turn_left():
-    GPIO.output(left_wheel_pin1, GPIO.LOW)
-    GPIO.output(left_wheel_pin2, GPIO.HIGH)
-    GPIO.output(right_wheel_pin1, GPIO.HIGH)
-    GPIO.output(right_wheel_pin2, GPIO.LOW)
-
-# Function to make a right turn
+    GPIO.output(in1A, GPIO.HIGH)
+    GPIO.output(in2A, GPIO.LOW)
+    GPIO.output(in3B, GPIO.LOW)
+    GPIO.output(in4B, GPIO.HIGH)
+    
 def turn_right():
-    GPIO.output(left_wheel_pin1, GPIO.HIGH)
-    GPIO.output(left_wheel_pin2, GPIO.LOW)
-    GPIO.output(right_wheel_pin1, GPIO.LOW)
-    GPIO.output(right_wheel_pin2, GPIO.HIGH)
-
-# Function to stop
+    GPIO.output(in1A, GPIO.LOW)
+    GPIO.output(in2A, GPIO.HIGH)
+    GPIO.output(in3B, GPIO.HIGH)
+    GPIO.output(in4B, GPIO.LOW)
+    
 def stop():
-    GPIO.output(left_wheel_pin1, GPIO.LOW)
-    GPIO.output(left_wheel_pin2, GPIO.LOW)
-    GPIO.output(right_wheel_pin1, GPIO.LOW)
-    GPIO.output(right_wheel_pin2, GPIO.LOW)
-
-# Example usage
+    GPIO.output(in1A, GPIO.LOW)
+    GPIO.output(in2A, GPIO.LOW)
+    GPIO.output(in3B, GPIO.LOW)
+    GPIO.output(in4B, GPIO.LOW)
+    
+    
+print("forward")
 move_forward()
-time.sleep(2)  # Move forward for 2 seconds
+sleep(2)
 stop()
-time.sleep(1)  # Stop for 1 second
-turn_left()
-time.sleep(1)  # Turn left for 1 second
-stop()
-time.sleep(1)  # Stop for 1 second
-turn_right()
-time.sleep(1)  # Turn right for 1 second
-stop()
-time.sleep(1)  # Stop for 1 second
+print("backwards")
 move_backward()
-time.sleep(2)  # Move backward for 2 seconds
+sleep(2)
 stop()
-
-# Cleanup GPIO pins
+print("left")
+turn_left()
+sleep(2)
+stop()
+print("right")
+turn_right()
+sleep(2)
+stop()
 GPIO.cleanup()
+

@@ -2,26 +2,34 @@ import RPi.GPIO as GPIO
 import time 
 
 
-GPIO.setmode(gpio.BCM)
+GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-TRIGEVEN = 29;
-ECHOEVEN = 31;
-TRIGODD = 33;
-ECHOODD = 35;
+
+
+trig_right = 5;
+echo_right = 6;
+
+
 print("Distance mesurement is in progress...")
-GPIO.setup(TRIGEVEN, GPIO.OUT)
-GPIO.setup(ECHOEVEN, GPIO.IN)
-GPIO.output(TRIGEVEN, False)
+GPIO.setup(trig_right, GPIO.OUT)
+GPIO.setup(echo_right, GPIO.IN)
+GPIO.output(trig_right, False)
 print("Sensor settles")
 time.sleep(2)
-GPIO.output(TRIGEVEN, True)
+GPIO.output(trig_right, True)
 time.sleep(0.00001)
-GPIO.output(TRIGEVEN, False)
-while GPIO.input(ECHOEVEN) == 0:
+GPIO.output(trig_right, False)
+
+
+while GPIO.input(echo_right) == 0:
 	pulse_start = time.time()
-while GPIO.input(ECHOEVEN) == 1:
+while GPIO.input(echo_right) == 1:
 	pulse_end = time.time()
+	
+	
 pulse_duration = pulse_end - pulse_start
 distance = pulse_duration * 17150
 distance = round(distance, 2)
-print("Distance: ",discance," cm")
+
+
+print("Distance: ", distance, " cm")
