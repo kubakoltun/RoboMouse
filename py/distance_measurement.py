@@ -6,8 +6,8 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
 
-trig_right = 5;
-echo_right = 6;
+trig_right = 5
+echo_right = 6
 
 
 print("Distance mesurement is in progress...")
