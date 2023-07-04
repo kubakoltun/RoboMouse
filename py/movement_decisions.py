@@ -1,31 +1,6 @@
 import RPi.GPIO as GPIO
 import time
 
-GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
-
-trig_right = 5
-echo_right = 6
-
-print("Distance mesurement is in progress...")
-GPIO.setup(trig_right, GPIO.OUT)
-GPIO.setup(echo_right, GPIO.IN)
-GPIO.output(trig_right, False)
-print("Sensor settles")
-time.sleep(2)
-GPIO.output(trig_right, True)
-time.sleep(0.00001)
-GPIO.output(trig_right, False)
-
-while GPIO.input(echo_right) == 0:
-    pulse_start = time.time()
-while GPIO.input(echo_right) == 1:
-    pulse_end = time.time()
-
-pulse_duration = pulse_end - pulse_start
-distance = pulse_duration * 17150
-distance = round(distance, 2)
-
 
 # right wheel
 in1A = 24
@@ -35,8 +10,12 @@ enA = 25
 in3B = 17
 in4B = 27
 enB = 22
+# first sensor
+trig_right = 5
+echo_right = 6
 
 GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
 
 GPIO.setup(in1A, GPIO.OUT)
 GPIO.setup(in2A, GPIO.OUT)
@@ -54,6 +33,28 @@ pA = GPIO.PWM(enA, 1000)
 pA.start(25)
 pB = GPIO.PWM(enB, 1000)
 pB.start(25)
+
+
+def distance_measurement():
+    print("Distance mesurement is in progress...")
+    GPIO.setup(trig_right, GPIO.OUT)
+    GPIO.setup(echo_right, GPIO.IN)
+    GPIO.output(trig_right, False)
+    print("Sensor settles")
+    time.sleep(2)
+    GPIO.output(trig_right, True)
+    time.sleep(0.00001)
+    GPIO.output(trig_right, False)
+
+    while GPIO.input(echo_right) == 0:
+        pulse_start = time.time()
+    while GPIO.input(echo_right) == 1:
+        pulse_end = time.time()
+
+    pulse_duration = pulse_end - pulse_start
+    distance = pulse_duration * 17150
+    distance = round(distance, 2)
+    return distance
 
 
 def move_forward():
@@ -91,22 +92,23 @@ def stop():
     GPIO.output(in4B, GPIO.LOW)
 
 
-print("forward")
-move_forward()
-time.sleep(2)
+while True:
+    distance = distance_measurement()
+    print("Distance: {} cm".format(distance))
 
-print("backwards")
-move_backward()
-time.sleep(2)
-time.sleep(1)
+    if distance > 30:
+        print("Moving forward")
+        move_forward()
+    else:
+        print("Stopping")
+        stop()
+        time.sleep(1)
 
-print("left")
-turn_left()
-time.sleep(2)
-time.sleep(1)
+        print("Turning left")
+        turn_left()
+        time.sleep(2)
 
-print("right")
-turn_right()
-time.sleep(2)
+    time.sleep(0.1)
+
 
 GPIO.cleanup()
