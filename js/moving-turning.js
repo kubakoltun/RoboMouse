@@ -1,78 +1,108 @@
-const { Board, Led, Motor } = require('johnny-five');
-const board = new Board();
+const Gpio = require('onoff').Gpio;
+const sleep = require('util').promisify(setTimeout);
 
-board.on('ready', () => {
-  // Define the GPIO pins for the wheels
-  const leftWheelPin1 = new Led(13);
-  const leftWheelPin2 = new Led(15);
-  const rightWheelPin1 = new Led(16);
-  const rightWheelPin2 = new Led(18);
+// right wheel
+const in1A = new Gpio(24, 'out');
+const in2A = new Gpio(23, 'out');
+const enA = new Gpio(25, 'out');
+// left wheel
+const in3B = new Gpio(17, 'out');
+const in4B = new Gpio(27, 'out');
+const enB = new Gpio(22, 'out');
+// first sensor
+const trig_right = new Gpio(5, 'out');
+const echo_right = new Gpio(6, 'in');
 
-  // Function to move forward
-  function moveForward() {
-    leftWheelPin1.on();
-    leftWheelPin2.off();
-    rightWheelPin1.on();
-    rightWheelPin2.off();
+const distance_measurement = async () => {
+  console.log("Distance measurement is in progress...");
+  trig_right.writeSync(0);
+  console.log("Sensor settles");
+  await sleep(2000);
+  trig_right.writeSync(1);
+  await sleep(0.00001);
+  trig_right.writeSync(0);
+
+  let pulse_start;
+  let pulse_end;
+
+  while (echo_right.readSync() === 0) {
+    pulse_start = process.hrtime();
   }
 
-  // Function to move backward
-  function moveBackward() {
-    leftWheelPin1.off();
-    leftWheelPin2.on();
-    rightWheelPin1.off();
-    rightWheelPin2.on();
+  while (echo_right.readSync() === 1) {
+    pulse_end = process.hrtime();
   }
 
-  // Function to make a left turn
-  function turnLeft() {
-    leftWheelPin1.off();
-    leftWheelPin2.on();
-    rightWheelPin1.on();
-    rightWheelPin2.off();
-  }
+  const pulse_duration = getDurationInSeconds(pulse_start, pulse_end);
+  const distance = pulse_duration * 17150;
+  return distance.toFixed(2);
+};
 
-  // Function to make a right turn
-  function turnRight() {
-    leftWheelPin1.on();
-    leftWheelPin2.off();
-    rightWheelPin1.off();
-    rightWheelPin2.on();
-  }
+const getDurationInSeconds = (start, end) => {
+  const [startSeconds, startNanoseconds] = start;
+  const [endSeconds, endNanoseconds] = end;
+  const seconds = endSeconds - startSeconds;
+  const nanoseconds = endNanoseconds - startNanoseconds;
+  return seconds + nanoseconds * 1e-9;
+};
 
-  // Function to stop
-  function stop() {
-    leftWheelPin1.off();
-    leftWheelPin2.off();
-    rightWheelPin1.off();
-    rightWheelPin2.off();
-  }
+const move_forward = () => {
+  in1A.writeSync(1);
+  in2A.writeSync(0);
+  in3B.writeSync(1);
+  in4B.writeSync(0);
+};
 
-  moveForward();
-  board.wait(2000, () => {
-    stop();
-    board.wait(1000, () => {
-      turnLeft();
-      board.wait(1000, () => {
+const move_backward = () => {
+  in1A.writeSync(0);
+  in2A.writeSync(1);
+  in3B.writeSync(0);
+  in4B.writeSync(1);
+};
+
+const turn_left = () => {
+  in1A.writeSync(1);
+  in2A.writeSync(0);
+  in3B.writeSync(0);
+  in4B.writeSync(1);
+};
+
+const turn_right = () => {
+  in1A.writeSync(0);
+  in2A.writeSync(1);
+  in3B.writeSync(1);
+  in4B.writeSync(0);
+};
+
+const stop = () => {
+  in1A.writeSync(0);
+  in2A.writeSync(0);
+  in3B.writeSync(0);
+  in4B.writeSync(0);
+};
+
+(async () => {
+  while (true) {
+    try {
+      const distance = await distance_measurement();
+      console.log(`Distance: ${distance} cm`);
+
+      if (distance > 30) {
+        console.log("Moving forward");
+        move_forward();
+      } else {
+        console.log("Stopping");
         stop();
-        board.wait(1000, () => {
-          turnRight();
-          board.wait(1000, () => {
-            stop();
-            board.wait(1000, () => {
-              moveBackward();
-              board.wait(2000, () => {
-                stop();
-                board.wait(1000, () => {
-                  // Cleanup GPIO pins
-                  board.io.reset();
-                  process.exit(0);
-                });
-              });
-            });
-          });
-        });
-      });
-    });
-  });
-});
+        await sleep(1000);
+
+        console.log("Turning left");
+        turn_left();
+        await sleep(2000);
+      }
+
+      await sleep(100);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+})();
