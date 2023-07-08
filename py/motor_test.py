@@ -2,9 +2,9 @@ import RPi.GPIO as GPIO
 import time
 
 # right wheel
-in1A = 24
+in1A = 8
 in2A = 23
-enA = 25
+enA = 3
 # left wheel
 in3B = 17
 in4B = 27
