@@ -25,9 +25,9 @@ GPIO.output(in3B, GPIO.LOW)
 GPIO.output(in4B, GPIO.LOW)
 
 pA = GPIO.PWM(enA, 1000)
-pA.start(25)
+pA.start(75)
 pB = GPIO.PWM(enB, 1000)
-pB.start(25)
+pB.start(75)
 
 
 def move_forward():
