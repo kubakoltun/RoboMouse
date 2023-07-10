@@ -28,5 +28,6 @@ def forward(st):
 
 print("forward")
 # put jumpers on en pins
+# could use in pins as pwm for tests, still should power the logic with a pi
 forward(4)
 GPIO.cleanup()
