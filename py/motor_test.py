@@ -9,7 +9,11 @@ enA = 3
 in3B = 17
 in4B = 27
 enB = 22
-
+# note for the configuration, power the motors with battery,
+# remove the logic jumper, power the logic terminal with pi 5V
+# now it should be able to handle both en pins with or without a jumpers
+# there is a possibility that I need to check if all the pins are working correctly
+# if not lets look for either a new H bridge or arduino/pi
 GPIO.setmode(GPIO.BCM)
 
 GPIO.setup(in1A, GPIO.OUT)
