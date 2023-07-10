@@ -36,7 +36,7 @@ pB.start(25)
 
 
 def distance_measurement():
-    print("Distance mesurement is in progress...")
+    print("Setting up mesurement...")
     GPIO.setup(trig_right, GPIO.OUT)
     GPIO.setup(echo_right, GPIO.IN)
     GPIO.output(trig_right, False)

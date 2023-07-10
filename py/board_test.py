@@ -8,14 +8,15 @@ in2A = 23
 in3B = 17
 in4B = 27
 
+
 def setup():
-	GPIO.setmode(GPIO.BCM)
-	GPIO.setup(in1A, GPIO.OUT)
-	GPIO.setup(in2A, GPIO.OUT)
-	GPIO.setup(in3B, GPIO.OUT)
-	GPIO.setup(in4B, GPIO.OUT)
-	
-	
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(in1A, GPIO.OUT)
+    GPIO.setup(in2A, GPIO.OUT)
+    GPIO.setup(in3B, GPIO.OUT)
+    GPIO.setup(in4B, GPIO.OUT)
+
+
 def forward(st):
     setup()
     GPIO.output(in1A, GPIO.HIGH)
@@ -23,8 +24,9 @@ def forward(st):
     GPIO.output(in3B, GPIO.HIGH)
     GPIO.output(in4B, GPIO.LOW)
     time.sleep(st)
-	
+
 
 print("forward")
+# put jumpers on en pins
 forward(4)
-GPIO.cleanup();
+GPIO.cleanup()
