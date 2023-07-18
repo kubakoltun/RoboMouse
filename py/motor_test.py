@@ -28,9 +28,9 @@ GPIO.setup(enB, GPIO.OUT)
 #GPIO.output(in3B, GPIO.LOW)
 #GPIO.output(in4B, GPIO.LOW)
 
-pA = GPIO.PWM(enA, 1000)
+pA = GPIO.PWM(enA, 500)
 pA.start(75)
-pB = GPIO.PWM(enB, 1000)
+pB = GPIO.PWM(enB, 500)
 pB.start(75)
 
 
@@ -48,10 +48,10 @@ def move_forward():
 def move_backward():
     GPIO.output(in1A, GPIO.LOW)
     GPIO.output(in2A, GPIO.HIGH)
-    GPIO.output(enA, GPIO.HIGH)
+    #GPIO.output(enA, GPIO.HIGH)
     GPIO.output(in3B, GPIO.LOW)
     GPIO.output(in4B, GPIO.HIGH)
-    GPIO.output(enB, GPIO.HIGH)
+    #GPIO.output(enB, GPIO.HIGH)
 
 
 def turn_left():
@@ -75,26 +75,36 @@ def turn_right():
 def stop():
     GPIO.output(in1A, GPIO.LOW)
     GPIO.output(in2A, GPIO.LOW)
-    GPIO.output(enA, GPIO.Low)
+    #GPIO.output(enA, GPIO.Low)
     GPIO.output(in3B, GPIO.LOW)
     GPIO.output(in4B, GPIO.LOW)
-    GPIO.output(enB, GPIO.LOW)
+    #GPIO.output(enB, GPIO.LOW)
 
 
 print("forward")
-move_forward()
-time.sleep(2)
-
-print("backwards")
 move_backward()
 time.sleep(2)
-
+stop()
+print('break')
+time.sleep(2)
+print("backwards")
+move_forward()
+time.sleep(2)
+stop()
+print('break')
+time.sleep(2)
 print("left")
 turn_left()
+time.sleep(2)
+stop()
+print('break')
 time.sleep(2)
 
 print("right")
 turn_right()
+time.sleep(2)
+stop()
+print('break')
 time.sleep(2)
 
 GPIO.cleanup()
