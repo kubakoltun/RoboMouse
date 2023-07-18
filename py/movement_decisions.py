@@ -5,11 +5,11 @@ import time
 # right wheel
 in1A = 24
 in2A = 23
-enA = 25
+enA = 12
 # left wheel
 in3B = 17
 in4B = 27
-enB = 22
+enB = 13
 # first sensor
 trig_right = 5
 echo_right = 6
@@ -29,10 +29,10 @@ GPIO.setup(enB, GPIO.OUT)
 GPIO.output(in3B, GPIO.LOW)
 GPIO.output(in4B, GPIO.LOW)
 
-pA = GPIO.PWM(enA, 1000)
-pA.start(25)
-pB = GPIO.PWM(enB, 1000)
-pB.start(25)
+pA = GPIO.PWM(enA, 500)
+pA.start(75)
+pB = GPIO.PWM(enB, 500)
+pB.start(75)
 
 
 def distance_measurement():
@@ -57,39 +57,44 @@ def distance_measurement():
     return distance
 
 
-def move_forward():
+def move_forward(how_long):
     GPIO.output(in1A, GPIO.HIGH)
     GPIO.output(in2A, GPIO.LOW)
     GPIO.output(in3B, GPIO.HIGH)
     GPIO.output(in4B, GPIO.LOW)
+    time.sleep(how_long)
 
 
-def move_backward():
+def move_backward(how_long):
     GPIO.output(in1A, GPIO.LOW)
     GPIO.output(in2A, GPIO.HIGH)
     GPIO.output(in3B, GPIO.LOW)
     GPIO.output(in4B, GPIO.HIGH)
+    time.sleep(how_long)
 
 
-def turn_left():
+def turn_left(how_long):
     GPIO.output(in1A, GPIO.HIGH)
     GPIO.output(in2A, GPIO.LOW)
     GPIO.output(in3B, GPIO.LOW)
     GPIO.output(in4B, GPIO.HIGH)
+    time.sleep(how_long)
 
 
-def turn_right():
+def turn_right(how_long):
     GPIO.output(in1A, GPIO.LOW)
     GPIO.output(in2A, GPIO.HIGH)
     GPIO.output(in3B, GPIO.HIGH)
     GPIO.output(in4B, GPIO.LOW)
+    time.sleep(how_long)
 
 
-def stop():
+def stop(how_long):
     GPIO.output(in1A, GPIO.LOW)
     GPIO.output(in2A, GPIO.LOW)
     GPIO.output(in3B, GPIO.LOW)
     GPIO.output(in4B, GPIO.LOW)
+    time.sleep(how_long)
 
 
 while True:
@@ -98,15 +103,13 @@ while True:
 
     if distance > 30:
         print("Moving forward")
-        move_forward()
+        move_forward(40)
     else:
         print("Stopping")
-        stop()
-        time.sleep(1)
+        stop(1)
 
         print("Turning left")
-        turn_left()
-        time.sleep(2)
+        turn_left(2)
 
     time.sleep(0.1)
 
