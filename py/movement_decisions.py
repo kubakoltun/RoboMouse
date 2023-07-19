@@ -2,36 +2,97 @@ import RPi.GPIO as GPIO
 import time
 
 # right wheel
-in1A = 24
+in1A = 25
 in2A = 23
 enA = 12
 # left wheel
 in3B = 17
 in4B = 27
 enB = 13
-# first sensor
+# sensor
 trig_right = 5
 echo_right = 6
 
+
+
 GPIO.setmode(GPIO.BCM)
-GPIO.setwarnings(False)
+
 
 GPIO.setup(in1A, GPIO.OUT)
 GPIO.setup(in2A, GPIO.OUT)
 GPIO.setup(enA, GPIO.OUT)
-GPIO.output(in1A, GPIO.LOW)
-GPIO.output(in2A, GPIO.LOW)
+#GPIO.output(in1A, GPIO.LOW)
+#GPIO.output(in2A, GPIO.LOW)
 
 GPIO.setup(in3B, GPIO.OUT)
 GPIO.setup(in4B, GPIO.OUT)
 GPIO.setup(enB, GPIO.OUT)
-GPIO.output(in3B, GPIO.LOW)
-GPIO.output(in4B, GPIO.LOW)
+#GPIO.output(in3B, GPIO.LOW)
+#GPIO.output(in4B, GPIO.LOW)
 
 pA = GPIO.PWM(enA, 500)
-pA.start(25)
+pA.start(75)
 pB = GPIO.PWM(enB, 500)
-pB.start(25)
+pB.start(75)
+
+
+def move_backward():
+    #pA.start(pwm_speed)
+    #pB.start(pwm_speed)
+    GPIO.output(in1A, GPIO.HIGH)
+    GPIO.output(in2A, GPIO.LOW)
+    #GPIO.output(enA, GPIO.HIGH)
+    GPIO.output(in3B, GPIO.HIGH)
+    GPIO.output(in4B, GPIO.LOW)
+    #GPIO.output(enB, GPIO.HIGH)
+    #time.sleep(sleep)
+
+
+def move_forward():
+    #pA.start(pwm_speed)
+    #pB.start(pwm_speed)
+    GPIO.output(in1A, GPIO.LOW)
+    GPIO.output(in2A, GPIO.HIGH)
+    #GPIO.output(enA, GPIO.HIGH)
+    GPIO.output(in3B, GPIO.LOW)
+    GPIO.output(in4B, GPIO.HIGH)
+    #GPIO.output(enB, GPIO.HIGH)
+    #time.sleep(sleep)
+
+
+def turn_left():
+    #pA.start(pwm_speed)
+    #pB.start(pwm_speed)
+    GPIO.output(in1A, GPIO.HIGH)
+    GPIO.output(in2A, GPIO.LOW)
+    GPIO.output(enA, GPIO.HIGH)
+    GPIO.output(in3B, GPIO.LOW)
+    GPIO.output(in4B, GPIO.HIGH)
+    GPIO.output(enB, GPIO.HIGH)
+    #time.sleep(sleep)
+
+
+def turn_right():
+    #pA.start(pwm_speed)
+    #pB.start(pwm_speed)
+    GPIO.output(in1A, GPIO.LOW)
+    GPIO.output(in2A, GPIO.HIGH)
+    GPIO.output(enA, GPIO.HIGH)
+    GPIO.output(in3B, GPIO.HIGH)
+    GPIO.output(in4B, GPIO.LOW)
+    GPIO.output(enB, GPIO.HIGH)
+    #time.sleep(sleep)
+
+
+def stop():
+    GPIO.output(in1A, GPIO.LOW)
+    GPIO.output(in2A, GPIO.LOW)
+    #GPIO.output(enA, GPIO.Low)
+    GPIO.output(in3B, GPIO.LOW)
+    GPIO.output(in4B, GPIO.LOW)
+    #GPIO.output(enB, GPIO.LOW)
+    #time.sleep(sleep)
+
 
 
 def distance_measurement():
@@ -58,47 +119,8 @@ def distance_measurement():
     return distance
 
 
-def move_forward():
-    GPIO.output(in1A, GPIO.HIGH)
-    GPIO.output(in2A, GPIO.LOW)
-    GPIO.output(in3B, GPIO.HIGH)
-    GPIO.output(in4B, GPIO.LOW)
-    #time.sleep(how_long)
 
-
-def move_backward(how_long):
-    GPIO.output(in1A, GPIO.LOW)
-    GPIO.output(in2A, GPIO.HIGH)
-    GPIO.output(in3B, GPIO.LOW)
-    GPIO.output(in4B, GPIO.HIGH)
-    time.sleep(how_long)
-
-
-def turn_left(how_long):
-    GPIO.output(in1A, GPIO.HIGH)
-    GPIO.output(in2A, GPIO.LOW)
-    GPIO.output(in3B, GPIO.LOW)
-    GPIO.output(in4B, GPIO.HIGH)
-    time.sleep(how_long)
-
-
-def turn_right(how_long):
-    GPIO.output(in1A, GPIO.LOW)
-    GPIO.output(in2A, GPIO.HIGH)
-    GPIO.output(in3B, GPIO.HIGH)
-    GPIO.output(in4B, GPIO.LOW)
-    time.sleep(how_long)
-
-
-def stop(how_long):
-    GPIO.output(in1A, GPIO.LOW)
-    GPIO.output(in2A, GPIO.LOW)
-    GPIO.output(in3B, GPIO.LOW)
-    GPIO.output(in4B, GPIO.LOW)
-    time.sleep(how_long)
-
-
-distance_threshold = 5
+distance_threshold = 15
 forward_speed = 25
 turning_speed = 25
 
@@ -106,25 +128,27 @@ while True:
     distance = distance_measurement()
     print("Distance: {} cm".format(distance))
 
-    if distance > 100:
+    if distance > 16:
         forward_speed += 1
         if forward_speed > 100:
             forward_speed = 100
         pA.ChangeDutyCycle(forward_speed)
         pB.ChangeDutyCycle(forward_speed)
         move_forward()
-    elif distance > distance_threshold:
-        forward_speed += 1
-        if forward_speed > 100:
-            forward_speed = 100
-        pA.ChangeDutyCycle(forward_speed)
-        pB.ChangeDutyCycle(forward_speed)
+    elif distance <= 15 and distance > 5:
+        #forward_speed += 1
+        #if forward_speed > 100:
+        #    forward_speed = 100
+        #pA.ChangeDutyCycle(forward_speed)
+        #pB.ChangeDutyCycle(forward_speed)
         move_forward()
     else:
-        stop(0.1)
+        stop()
+        time.sleep(0.1)
 
         print("Turning left")
-        turn_left(2)
+        turn_left()
+        time.sleep(0.5)
 
         print("Measuring distance after turning left")
         distance = distance_measurement()
@@ -132,7 +156,8 @@ while True:
 
         if distance > distance_threshold:
             print("Turning right")
-            turn_right(4)
+            turn_right()
+            time.sleep(1)
 
     time.sleep(0.01)
 
