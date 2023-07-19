@@ -13,6 +13,7 @@ enB = 13
 
 GPIO.setmode(GPIO.BCM)
 
+
 GPIO.setup(in1A, GPIO.OUT)
 GPIO.setup(in2A, GPIO.OUT)
 GPIO.setup(enA, GPIO.OUT)
@@ -32,41 +33,51 @@ pB.start(75)
 
 
 def move_forward():
-    #pA.start(50)
-    #pB.start(50)
+    #pA.start(pwm_speed)
+    #pB.start(pwm_speed)
     GPIO.output(in1A, GPIO.HIGH)
     GPIO.output(in2A, GPIO.LOW)
     #GPIO.output(enA, GPIO.HIGH)
     GPIO.output(in3B, GPIO.HIGH)
     GPIO.output(in4B, GPIO.LOW)
     #GPIO.output(enB, GPIO.HIGH)
+    #time.sleep(sleep)
 
 
 def move_backward():
+    #pA.start(pwm_speed)
+    #pB.start(pwm_speed)
     GPIO.output(in1A, GPIO.LOW)
     GPIO.output(in2A, GPIO.HIGH)
     #GPIO.output(enA, GPIO.HIGH)
     GPIO.output(in3B, GPIO.LOW)
     GPIO.output(in4B, GPIO.HIGH)
     #GPIO.output(enB, GPIO.HIGH)
+    #time.sleep(sleep)
 
 
 def turn_left():
+    #pA.start(pwm_speed)
+    #pB.start(pwm_speed)
     GPIO.output(in1A, GPIO.HIGH)
     GPIO.output(in2A, GPIO.LOW)
     GPIO.output(enA, GPIO.HIGH)
     GPIO.output(in3B, GPIO.LOW)
     GPIO.output(in4B, GPIO.HIGH)
     GPIO.output(enB, GPIO.HIGH)
+    #time.sleep(sleep)
 
 
 def turn_right():
+    #pA.start(pwm_speed)
+    #pB.start(pwm_speed)
     GPIO.output(in1A, GPIO.LOW)
     GPIO.output(in2A, GPIO.HIGH)
     GPIO.output(enA, GPIO.HIGH)
     GPIO.output(in3B, GPIO.HIGH)
     GPIO.output(in4B, GPIO.LOW)
     GPIO.output(enB, GPIO.HIGH)
+    #time.sleep(sleep)
 
 
 def stop():
@@ -76,6 +87,7 @@ def stop():
     GPIO.output(in3B, GPIO.LOW)
     GPIO.output(in4B, GPIO.LOW)
     #GPIO.output(enB, GPIO.LOW)
+    #time.sleep(sleep)
 
 
 print("forward")
