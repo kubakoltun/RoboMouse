@@ -44,6 +44,8 @@ def distance_measurement():
     GPIO.output(trig_right, True)
     time.sleep(0.00001)
     GPIO.output(trig_right, False)
+    pulse_start = 0
+    pulse_end = 0
 
     while GPIO.input(echo_right) == 0:
         pulse_start = time.time()
@@ -56,7 +58,7 @@ def distance_measurement():
     return distance
 
 
-def move_forward(how_long):
+def move_forward():
     GPIO.output(in1A, GPIO.HIGH)
     GPIO.output(in2A, GPIO.LOW)
     GPIO.output(in3B, GPIO.HIGH)
@@ -110,7 +112,7 @@ while True:
             forward_speed = 100
         pA.ChangeDutyCycle(forward_speed)
         pB.ChangeDutyCycle(forward_speed)
-        move_forward(0.01)
+        move_forward()
     elif distance > distance_threshold:
         forward_speed += 1
         if forward_speed > 100:
