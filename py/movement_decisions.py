@@ -120,46 +120,57 @@ def distance_measurement():
 
 
 
-distance_threshold = 15
-forward_speed = 25
-turning_speed = 25
+# Define speed constants
+forward_speed = 50
+turning_speed = 50
 
-while True:
+# Define distance thresholds
+min_distance = 10
+max_distance = 20
+
+def avoid_obstacle():
+    # Stop the robot
+    stop()
+    time.sleep(0.1)
+
+    # Measure distance after stopping
     distance = distance_measurement()
-    print("Distance: {} cm".format(distance))
+    print("Distance after stopping: {} cm".format(distance))
 
-    if distance > 16:
-        forward_speed += 1
-        if forward_speed > 100:
-            forward_speed = 100
-        pA.ChangeDutyCycle(forward_speed)
-        pB.ChangeDutyCycle(forward_speed)
-        move_forward()
-    elif distance <= 15 and distance > 5:
-        #forward_speed += 1
-        #if forward_speed > 100:
-        #    forward_speed = 100
-        #pA.ChangeDutyCycle(forward_speed)
-        #pB.ChangeDutyCycle(forward_speed)
-        move_forward()
+    # Turn right or left based on the measured distance
+    if distance > max_distance:
+        print("Turning right")
+        turn_right()
     else:
-        stop()
-        time.sleep(0.1)
-
         print("Turning left")
         turn_left()
-        time.sleep(0.5)
 
-        print("Measuring distance after turning left")
-        distance = distance_measurement()
-        print("Distance after turning left: {} cm".format(distance))
+    # Wait for a short duration before resuming forward movement
+    time.sleep(0.5)
 
-        if distance > distance_threshold:
-            print("Turning right")
-            turn_right()
-            time.sleep(1)
+def main():
+    try:
+        while True:
+            distance = distance_measurement()
+            print("Distance: {} cm".format(distance))
 
-    time.sleep(0.01)
+            if distance > max_distance:
+                # Move forward at full speed if there's no obstacle ahead
+                pA.ChangeDutyCycle(forward_speed)
+                pB.ChangeDutyCycle(forward_speed)
+                move_forward()
+            elif min_distance < distance <= max_distance:
+                # Obstacle detected, initiate obstacle avoidance
+                avoid_obstacle()
+            else:
+                # Obstacle too close, stop and wait
+                stop()
+                time.sleep(0.1)
 
+    except KeyboardInterrupt:
+        print("Program terminated by user.")
+    finally:
+        GPIO.cleanup()
 
-GPIO.cleanup()
+if __name__ == "__main__":
+    main()
