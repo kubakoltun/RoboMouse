@@ -13,22 +13,19 @@ enB = 13
 trig_right = 5
 echo_right = 6
 
-
-
 GPIO.setmode(GPIO.BCM)
-
 
 GPIO.setup(in1A, GPIO.OUT)
 GPIO.setup(in2A, GPIO.OUT)
 GPIO.setup(enA, GPIO.OUT)
-#GPIO.output(in1A, GPIO.LOW)
-#GPIO.output(in2A, GPIO.LOW)
+# GPIO.output(in1A, GPIO.LOW)
+# GPIO.output(in2A, GPIO.LOW)
 
 GPIO.setup(in3B, GPIO.OUT)
 GPIO.setup(in4B, GPIO.OUT)
 GPIO.setup(enB, GPIO.OUT)
-#GPIO.output(in3B, GPIO.LOW)
-#GPIO.output(in4B, GPIO.LOW)
+# GPIO.output(in3B, GPIO.LOW)
+# GPIO.output(in4B, GPIO.LOW)
 
 pA = GPIO.PWM(enA, 500)
 pA.start(75)
@@ -37,62 +34,61 @@ pB.start(75)
 
 
 def move_backward():
-    #pA.start(pwm_speed)
-    #pB.start(pwm_speed)
+    # pA.start(pwm_speed)
+    # pB.start(pwm_speed)
     GPIO.output(in1A, GPIO.HIGH)
     GPIO.output(in2A, GPIO.LOW)
-    #GPIO.output(enA, GPIO.HIGH)
+    # GPIO.output(enA, GPIO.HIGH)
     GPIO.output(in3B, GPIO.HIGH)
     GPIO.output(in4B, GPIO.LOW)
-    #GPIO.output(enB, GPIO.HIGH)
-    #time.sleep(sleep)
+    # GPIO.output(enB, GPIO.HIGH)
+    # time.sleep(sleep)
 
 
 def move_forward():
-    #pA.start(pwm_speed)
-    #pB.start(pwm_speed)
+    # pA.start(pwm_speed)
+    # pB.start(pwm_speed)
     GPIO.output(in1A, GPIO.LOW)
     GPIO.output(in2A, GPIO.HIGH)
-    #GPIO.output(enA, GPIO.HIGH)
+    # GPIO.output(enA, GPIO.HIGH)
     GPIO.output(in3B, GPIO.LOW)
     GPIO.output(in4B, GPIO.HIGH)
-    #GPIO.output(enB, GPIO.HIGH)
-    #time.sleep(sleep)
+    # GPIO.output(enB, GPIO.HIGH)
+    # time.sleep(sleep)
 
 
 def turn_left():
-    #pA.start(pwm_speed)
-    #pB.start(pwm_speed)
+    # pA.start(pwm_speed)
+    # pB.start(pwm_speed)
     GPIO.output(in1A, GPIO.HIGH)
     GPIO.output(in2A, GPIO.LOW)
     GPIO.output(enA, GPIO.HIGH)
     GPIO.output(in3B, GPIO.LOW)
     GPIO.output(in4B, GPIO.HIGH)
     GPIO.output(enB, GPIO.HIGH)
-    #time.sleep(sleep)
+    # time.sleep(sleep)
 
 
 def turn_right():
-    #pA.start(pwm_speed)
-    #pB.start(pwm_speed)
+    # pA.start(pwm_speed)
+    # pB.start(pwm_speed)
     GPIO.output(in1A, GPIO.LOW)
     GPIO.output(in2A, GPIO.HIGH)
     GPIO.output(enA, GPIO.HIGH)
     GPIO.output(in3B, GPIO.HIGH)
     GPIO.output(in4B, GPIO.LOW)
     GPIO.output(enB, GPIO.HIGH)
-    #time.sleep(sleep)
+    # time.sleep(sleep)
 
 
 def stop():
     GPIO.output(in1A, GPIO.LOW)
     GPIO.output(in2A, GPIO.LOW)
-    #GPIO.output(enA, GPIO.Low)
+    # GPIO.output(enA, GPIO.Low)
     GPIO.output(in3B, GPIO.LOW)
     GPIO.output(in4B, GPIO.LOW)
-    #GPIO.output(enB, GPIO.LOW)
-    #time.sleep(sleep)
-
+    # GPIO.output(enB, GPIO.LOW)
+    # time.sleep(sleep)
 
 
 def distance_measurement():
@@ -119,7 +115,6 @@ def distance_measurement():
     return distance
 
 
-
 # Define speed constants
 forward_speed = 50
 turning_speed = 50
@@ -127,6 +122,7 @@ turning_speed = 50
 # Define distance thresholds
 min_distance = 10
 max_distance = 20
+
 
 def avoid_obstacle():
     # Stop the robot
@@ -147,6 +143,7 @@ def avoid_obstacle():
 
     # Wait for a short duration before resuming forward movement
     time.sleep(0.5)
+
 
 def main():
     try:
@@ -171,6 +168,7 @@ def main():
         print("Program terminated by user.")
     finally:
         GPIO.cleanup()
+
 
 if __name__ == "__main__":
     main()
