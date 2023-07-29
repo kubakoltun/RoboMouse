@@ -1,5 +1,7 @@
 import RPi.GPIO as GPIO
 import time
+import threading
+
 
 # right wheel
 in1A = 25
@@ -91,23 +93,31 @@ def stop():
     # time.sleep(sleep)
 
 
+# Define speed constants
+forward_speed = 50
+turning_speed = 50
+
+# Define distance thresholds
+min_distance = 7
+max_distance = 20
+
+
 def distance_measurement():
-    print("Setting up measurement...")
     GPIO.setup(trig_right, GPIO.OUT)
     GPIO.setup(echo_right, GPIO.IN)
     GPIO.output(trig_right, False)
-    print("Sensor settles")
-    time.sleep(2)
+    time.sleep(0.00001)
     GPIO.output(trig_right, True)
     time.sleep(0.00001)
     GPIO.output(trig_right, False)
-    pulse_start = 0
-    pulse_end = 0
 
-    while GPIO.input(echo_right) == 0:
-        pulse_start = time.time()
-    while GPIO.input(echo_right) == 1:
-        pulse_end = time.time()
+    pulse_start = GPIO.wait_for_edge(echo_right, GPIO.RISING, timeout=500)  # Timeout after 500ms
+    if pulse_start is None:
+        return float('inf')  # Return a large value if no echo pulse is received
+
+    pulse_end = GPIO.wait_for_edge(echo_right, GPIO.FALLING, timeout=500)  # Timeout after 500ms
+    if pulse_end is None:
+        return float('inf')  # Return a large value if no echo pulse is received
 
     pulse_duration = pulse_end - pulse_start
     distance = pulse_duration * 17150
@@ -115,31 +125,43 @@ def distance_measurement():
     return distance
 
 
-# Define speed constants
-forward_speed = 50
-turning_speed = 50
-
-# Define distance thresholds
-min_distance = 10
-max_distance = 20
-
-
 def avoid_obstacle():
-    # Stop the robot
     stop()
-    time.sleep(0.1)
 
     # Measure distance after stopping
     distance = distance_measurement()
     print("Distance after stopping: {} cm".format(distance))
 
-    # Turn right or left based on the measured distance
-    if distance > max_distance:
+    if distance > min_distance:
+        # Perform the initial right turn
         print("Turning right")
         turn_right()
-    else:
-        print("Turning left")
-        turn_left()
+
+        # Wait for the robot to complete the turn
+        time.sleep(1.5)
+
+        # Measure distance to the right after turning
+        right_distance = distance_measurement()
+        print("Distance to the right after turning: {} cm".format(right_distance))
+
+        if right_distance > min_distance:
+            # Turn right again to avoid the obstacle
+            print("Turning right again")
+            turn_right()
+        else:
+            # Not enough space on the right, perform a 180-degree turn to the left
+            print("Performing a 180-degree turn to the left")
+            turn_left()
+            time.sleep(1.5)
+
+            # Measure distance to the right after the 180-degree turn
+            right_distance = distance_measurement()
+            print("Distance to the right after 180-degree turn: {} cm".format(right_distance))
+
+            if right_distance <= min_distance:
+                # There's still an obstacle on the right, turn left again to avoid it
+                print("Turning left again to avoid the obstacle")
+                turn_left()
 
     # Wait for a short duration before resuming forward movement
     time.sleep(0.5)
@@ -147,6 +169,8 @@ def avoid_obstacle():
 
 def main():
     try:
+        threading.Thread(target=distance_monitoring_thread, daemon=True).start()
+
         while True:
             distance = distance_measurement()
             print("Distance: {} cm".format(distance))
@@ -168,6 +192,13 @@ def main():
         print("Program terminated by user.")
     finally:
         GPIO.cleanup()
+
+
+def distance_monitoring_thread():
+    while True:
+        distance = distance_measurement()
+        print("Distance: {} cm".format(distance))
+        time.sleep(0.1)
 
 
 if __name__ == "__main__":
