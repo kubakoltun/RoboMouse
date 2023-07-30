@@ -2,11 +2,11 @@ import RPi.GPIO as GPIO
 import time
 import threading
 # TODO speed does not change, I want to scale it (depending on the distance)
-# TODO while stopping or detecting any change in movement lower the speed
+# TODO while stopping or detecting any change in movement lower the speed gradually
 # TODO Improve recovery action
-# TODO divide this file into suitable pieces
 # TODO observe: wheels, measuring speed (is it enough), turning speed (does the 90 degree turn takes 0.25s at 50 pwm)
 
+# SETUP
 # right wheel
 in1A = 25
 in2A = 23
@@ -37,8 +37,9 @@ pA = GPIO.PWM(enA, 500)
 pA.start(global_pwm_speed)
 pB = GPIO.PWM(enB, 500)
 pB.start(global_pwm_speed)
+# SETUP
 
-
+# MANEUVERS
 def move_backward():
     # pA.ChangeDutyCycle(pwm_speed)
     # pB.ChangeDutyCycle(pwm_speed)
@@ -87,13 +88,15 @@ def stop():
     GPIO.output(in3B, GPIO.LOW)
     GPIO.output(in4B, GPIO.LOW)
     # time.sleep(sleep)
+# MANEUVERS
 
-
+# SETUP
 # Define distance thresholds
 min_distance = 7
 max_distance = 20
+# SETUP
 
-
+# DISTANCE MEASUREMENT
 def distance_measurement():
     GPIO.setup(trig_right, GPIO.OUT)
     GPIO.setup(echo_right, GPIO.IN)
@@ -115,8 +118,9 @@ def distance_measurement():
     distance = pulse_duration * 17150
     distance = round(distance, 2)
     return distance
+# DISTANCE MEASUREMENT
 
-
+# MANEUVERS
 def avoid_obstacle():
     stop()
 
@@ -157,14 +161,16 @@ def avoid_obstacle():
 
     # Wait for a short duration before resuming forward movement
     time.sleep(0.5)
+# MANEUVERS
 
-
+# SETUP
 # Define the time threshold for stuck detection (in seconds)
 stuck_threshold = 5
 stuck_start_time = 0
 is_stuck = False
+# SETUP
 
-
+# MOVEMENT
 def main():
     global is_stuck, stuck_start_time
 
@@ -220,14 +226,15 @@ def main():
         print("Program terminated by user.")
     finally:
         GPIO.cleanup()
+# MOVEMENT
 
-
+# DISTANCE MEASUREMENT
 def distance_monitoring_thread():
     while True:
         distance = distance_measurement()
         print("Distance: {} cm".format(distance))
         time.sleep(0.1)
-
+# DISTANCE MEASUREMENT
 
 if __name__ == "__main__":
     main()
