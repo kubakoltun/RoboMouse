@@ -1,7 +1,11 @@
 import RPi.GPIO as GPIO
 import time
 import threading
-
+# TODO speed does not change, I want to scale it (depending on the distance)
+# TODO while stopping or detecting any change in movement lower the speed
+# TODO Improve recovery action
+# TODO divide this file into suitable pieces
+# TODO observe: wheels, measuring speed (is it enough), turning speed (does the 90 degree turn takes 0.25s at 50 pwm)
 
 # right wheel
 in1A = 25
@@ -20,82 +24,70 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(in1A, GPIO.OUT)
 GPIO.setup(in2A, GPIO.OUT)
 GPIO.setup(enA, GPIO.OUT)
-# GPIO.output(in1A, GPIO.LOW)
-# GPIO.output(in2A, GPIO.LOW)
 
 GPIO.setup(in3B, GPIO.OUT)
 GPIO.setup(in4B, GPIO.OUT)
 GPIO.setup(enB, GPIO.OUT)
-# GPIO.output(in3B, GPIO.LOW)
-# GPIO.output(in4B, GPIO.LOW)
+
+
+# Define speed variables
+global_pwm_speed = 50
 
 pA = GPIO.PWM(enA, 500)
-pA.start(75)
+pA.start(global_pwm_speed)
 pB = GPIO.PWM(enB, 500)
-pB.start(75)
+pB.start(global_pwm_speed)
 
 
 def move_backward():
-    # pA.start(pwm_speed)
-    # pB.start(pwm_speed)
+    # pA.ChangeDutyCycle(pwm_speed)
+    # pB.ChangeDutyCycle(pwm_speed)
     GPIO.output(in1A, GPIO.HIGH)
     GPIO.output(in2A, GPIO.LOW)
-    # GPIO.output(enA, GPIO.HIGH)
     GPIO.output(in3B, GPIO.HIGH)
     GPIO.output(in4B, GPIO.LOW)
-    # GPIO.output(enB, GPIO.HIGH)
     # time.sleep(sleep)
 
 
 def move_forward():
-    # pA.start(pwm_speed)
-    # pB.start(pwm_speed)
+    # pA.ChangeDutyCycle(pwm_speed)
+    # pB.ChangeDutyCycle(pwm_speed)
     GPIO.output(in1A, GPIO.LOW)
     GPIO.output(in2A, GPIO.HIGH)
-    # GPIO.output(enA, GPIO.HIGH)
     GPIO.output(in3B, GPIO.LOW)
     GPIO.output(in4B, GPIO.HIGH)
-    # GPIO.output(enB, GPIO.HIGH)
     # time.sleep(sleep)
 
 
 def turn_left():
-    # pA.start(pwm_speed)
-    # pB.start(pwm_speed)
+    # pA.ChangeDutyCycle(pwm_speed)
+    # pB.ChangeDutyCycle(pwm_speed)
     GPIO.output(in1A, GPIO.HIGH)
     GPIO.output(in2A, GPIO.LOW)
-    GPIO.output(enA, GPIO.HIGH)
     GPIO.output(in3B, GPIO.LOW)
     GPIO.output(in4B, GPIO.HIGH)
-    GPIO.output(enB, GPIO.HIGH)
     # time.sleep(sleep)
 
 
 def turn_right():
-    # pA.start(pwm_speed)
-    # pB.start(pwm_speed)
+    # pA.ChangeDutyCycle(pwm_speed)
+    # pB.ChangeDutyCycle(pwm_speed)
     GPIO.output(in1A, GPIO.LOW)
     GPIO.output(in2A, GPIO.HIGH)
-    GPIO.output(enA, GPIO.HIGH)
     GPIO.output(in3B, GPIO.HIGH)
     GPIO.output(in4B, GPIO.LOW)
-    GPIO.output(enB, GPIO.HIGH)
     # time.sleep(sleep)
 
 
 def stop():
+    # pA.ChangeDutyCycle(pwm_speed)
+    # pB.ChangeDutyCycle(pwm_speed)
     GPIO.output(in1A, GPIO.LOW)
     GPIO.output(in2A, GPIO.LOW)
-    # GPIO.output(enA, GPIO.Low)
     GPIO.output(in3B, GPIO.LOW)
     GPIO.output(in4B, GPIO.LOW)
-    # GPIO.output(enB, GPIO.LOW)
     # time.sleep(sleep)
 
-
-# Define speed constants
-forward_speed = 50
-turning_speed = 50
 
 # Define distance thresholds
 min_distance = 7
@@ -111,11 +103,11 @@ def distance_measurement():
     time.sleep(0.00001)
     GPIO.output(trig_right, False)
 
-    pulse_start = GPIO.wait_for_edge(echo_right, GPIO.RISING, timeout=500)  # Timeout after 500ms
+    pulse_start = GPIO.wait_for_edge(echo_right, GPIO.RISING, timeout=500)
     if pulse_start is None:
         return float('inf')  # Return a large value if no echo pulse is received
 
-    pulse_end = GPIO.wait_for_edge(echo_right, GPIO.FALLING, timeout=500)  # Timeout after 500ms
+    pulse_end = GPIO.wait_for_edge(echo_right, GPIO.FALLING, timeout=500)
     if pulse_end is None:
         return float('inf')  # Return a large value if no echo pulse is received
 
@@ -136,32 +128,32 @@ def avoid_obstacle():
         # Perform the initial right turn
         print("Turning right")
         turn_right()
-
-        # Wait for the robot to complete the turn
-        time.sleep(1.5)
+        # Wait for the robot to complete the turn - need to monitor how long does it take
+        time.sleep(0.25)
 
         # Measure distance to the right after turning
         right_distance = distance_measurement()
         print("Distance to the right after turning: {} cm".format(right_distance))
 
-        if right_distance > min_distance:
-            # Turn right again to avoid the obstacle
-            print("Turning right again")
-            turn_right()
-        else:
+        # if right_distance > min_distance:
+        #     # Turn right again to avoid the obstacle
+        #     print("Turning right again")
+        #     turn_right()
+        if right_distance < min_distance:
             # Not enough space on the right, perform a 180-degree turn to the left
             print("Performing a 180-degree turn to the left")
             turn_left()
-            time.sleep(1.5)
+            time.sleep(0.5)
 
-            # Measure distance to the right after the 180-degree turn
+            # Check the distance after the 180-degree turn
             right_distance = distance_measurement()
-            print("Distance to the right after 180-degree turn: {} cm".format(right_distance))
+            print("Distance after 180-degree turn: {} cm".format(right_distance))
 
             if right_distance <= min_distance:
-                # There's still an obstacle on the right, turn left again to avoid it
+                # There's still an obstacle on both sides, turn left again to avoid it
                 print("Turning left again to avoid the obstacle")
                 turn_left()
+                time.sleep(0.25)
 
     # Wait for a short duration before resuming forward movement
     time.sleep(0.5)
@@ -188,8 +180,9 @@ def main():
                 # The robot is moving forward
                 is_stuck = False
                 stuck_start_time = 0
-                pA.ChangeDutyCycle(forward_speed)
-                pB.ChangeDutyCycle(forward_speed)
+                # Still need to implement a logic for scaling the speed
+                pA.ChangeDutyCycle(global_pwm_speed)
+                pB.ChangeDutyCycle(global_pwm_speed)
                 move_forward()
             elif min_distance < distance <= max_distance:
                 # Obstacle detected, initiate obstacle avoidance
@@ -212,16 +205,16 @@ def main():
                 if time.time() - stuck_start_time > stuck_threshold:
                     print("Robot is stuck!")
                     is_stuck = True
-                    # Implement recovery action
+                    # Recovery action
                     move_backward()
                     time.sleep(0.5)
 
                     # Turn left to attempt to get unstuck
                     turn_left()
-                    time.sleep(1)
+                    time.sleep(0.25)
 
-            # Uncomment the line below for continuous monitoring of distance
-            # distance_monitoring_thread()
+            # Continuous monitoring of distance - will it
+            distance_monitoring_thread()
 
     except KeyboardInterrupt:
         print("Program terminated by user.")
