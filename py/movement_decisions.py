@@ -39,6 +39,7 @@ pB = GPIO.PWM(enB, 500)
 pB.start(global_pwm_speed)
 # SETUP
 
+
 # MANEUVERS
 def move_backward():
     # pA.ChangeDutyCycle(pwm_speed)
@@ -90,11 +91,13 @@ def stop():
     # time.sleep(sleep)
 # MANEUVERS
 
+
 # SETUP
 # Define distance thresholds
 min_distance = 7
 max_distance = 20
 # SETUP
+
 
 # DISTANCE MEASUREMENT
 def distance_measurement():
@@ -119,6 +122,7 @@ def distance_measurement():
     distance = round(distance, 2)
     return distance
 # DISTANCE MEASUREMENT
+
 
 # MANEUVERS
 def avoid_obstacle():
@@ -163,12 +167,14 @@ def avoid_obstacle():
     time.sleep(0.5)
 # MANEUVERS
 
+
 # SETUP
 # Define the time threshold for stuck detection (in seconds)
 stuck_threshold = 5
 stuck_start_time = 0
 is_stuck = False
 # SETUP
+
 
 # MOVEMENT
 def main():
@@ -228,6 +234,7 @@ def main():
         GPIO.cleanup()
 # MOVEMENT
 
+
 # DISTANCE MEASUREMENT
 def distance_monitoring_thread():
     while True:
@@ -236,5 +243,8 @@ def distance_monitoring_thread():
         time.sleep(0.1)
 # DISTANCE MEASUREMENT
 
+
+# MOVEMENT
 if __name__ == "__main__":
     main()
+# MOVEMENT
