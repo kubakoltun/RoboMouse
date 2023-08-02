@@ -4,8 +4,12 @@ import threading
 # TODO speed does not change, I want to scale it (depending on the distance)
 # TODO while stopping or detecting any change in movement lower the speed gradually
 # TODO Improve recovery action - do not work at all
-# TODO observe: wheels, measuring speed (is it enough), turning speed (does the 90 degree turn takes 0.25s at 50 pwm)
-# TODO 0.25 makes about 2.5 rotations with speed of 50
+
+# 0.25 makes about 2.5 rotations with speed of 50
+# here the measuring speed seems to be decent its the reaction time and type that makes it bad
+# usually the issue is that reaction time is about 5s after bumping into an object 
+# sometimes sensore just do not see the object and it continues running with 0 or large numbers 
+
 
 # SETUP
 # right wheel
