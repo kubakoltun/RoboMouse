@@ -3,8 +3,9 @@ import time
 import threading
 # TODO speed does not change, I want to scale it (depending on the distance)
 # TODO while stopping or detecting any change in movement lower the speed gradually
-# TODO Improve recovery action
+# TODO Improve recovery action - do not work at all
 # TODO observe: wheels, measuring speed (is it enough), turning speed (does the 90 degree turn takes 0.25s at 50 pwm)
+# TODO 0.25 makes about 2.5 rotations with speed of 50
 
 # SETUP
 # right wheel
@@ -104,18 +105,30 @@ def distance_measurement():
     GPIO.setup(trig_right, GPIO.OUT)
     GPIO.setup(echo_right, GPIO.IN)
     GPIO.output(trig_right, False)
-    time.sleep(0.00001)
+    time.sleep(1)
     GPIO.output(trig_right, True)
-    time.sleep(0.00001)
+    time.sleep(0.0001)
     GPIO.output(trig_right, False)
 
-    pulse_start = GPIO.wait_for_edge(echo_right, GPIO.RISING, timeout=500)
-    if pulse_start is None:
-        return float('inf')  # Return a large value if no echo pulse is received
+    
 
-    pulse_end = GPIO.wait_for_edge(echo_right, GPIO.FALLING, timeout=500)
+    pulse_start = 0;
+    pulse_end = 0;
+    
+    while GPIO.input(echo_right) == 0:
+        pulse_start = time.time()
+    while GPIO.input(echo_right) == 1:
+        pulse_end = time.time()
+        
+        
+    #pulse_start = GPIO.wait_for_edge(echo_right, GPIO.RISING, timeout=1000)
+    if pulse_start is None:
+        return float('inf')  
+
+    #pulse_end = GPIO.wait_for_edge(echo_right, GPIO.FALLING, timeout=1000)
     if pulse_end is None:
-        return float('inf')  # Return a large value if no echo pulse is received
+        return float('inf')  
+	
 
     pulse_duration = pulse_end - pulse_start
     distance = pulse_duration * 17150
@@ -181,7 +194,7 @@ def main():
     global is_stuck, stuck_start_time
 
     try:
-        threading.Thread(target=distance_monitoring_thread, daemon=True).start()
+        #threading.Thread(target=distance_monitoring_thread, daemon=True).start()
 
         while True:
             distance = distance_measurement()
@@ -226,7 +239,8 @@ def main():
                     time.sleep(0.25)
 
             # Continuous monitoring of distance - will it
-            distance_monitoring_thread()
+            #distance_monitoring_thread()
+            #time.sleep(0.1)
 
     except KeyboardInterrupt:
         print("Program terminated by user.")
@@ -236,11 +250,11 @@ def main():
 
 
 # DISTANCE MEASUREMENT
-def distance_monitoring_thread():
-    while True:
-        distance = distance_measurement()
-        print("Distance: {} cm".format(distance))
-        time.sleep(0.1)
+#def distance_monitoring_thread():
+ #   while True:
+  #      distance = distance_measurement()
+   #     print("Distance: {} cm".format(distance))
+    #    time.sleep(0.1)
 # DISTANCE MEASUREMENT
 
 

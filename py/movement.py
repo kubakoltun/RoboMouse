@@ -2,6 +2,7 @@ import RPi.GPIO as GPIO
 import threading
 from maneuvers import *
 
+# TODO does not measure sufficient enough, gets stuck after a second, 5 large incorrect measurements per 50 total
 
 def main():
     global is_stuck, stuck_start_time

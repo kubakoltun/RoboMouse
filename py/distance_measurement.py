@@ -11,14 +11,22 @@ def distance_measurement():
     GPIO.output(trig_right, True)
     time.sleep(0.00001)
     GPIO.output(trig_right, False)
+    
+    pulse_start = 0
+    pulse_end = 0
+    
+    while GPIO.input(echo_right) == 0:
+        pulse_start = time.time()
+    while GPIO.input(echo_right) == 1:
+        pulse_end = time.time()
 
-    pulse_start = GPIO.wait_for_edge(echo_right, GPIO.RISING, timeout=500)
-    if pulse_start is None:
-        return float('inf')
+    #pulse_start = GPIO.wait_for_edge(echo_right, GPIO.RISING, timeout=500)
+    #if pulse_start is None:
+    #    return float('inf')
 
-    pulse_end = GPIO.wait_for_edge(echo_right, GPIO.FALLING, timeout=500)
-    if pulse_end is None:
-        return float('inf')
+    #pulse_end = GPIO.wait_for_edge(echo_right, GPIO.FALLING, timeout=500)
+    #if pulse_end is None:
+    #    return float('inf')
 
     pulse_duration = pulse_end - pulse_start
     distance = pulse_duration * 17150
