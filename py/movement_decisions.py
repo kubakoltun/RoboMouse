@@ -108,7 +108,7 @@ def distance_measurement():
     GPIO.setup(trig_right, GPIO.OUT)
     GPIO.setup(echo_right, GPIO.IN)
     GPIO.output(trig_right, False)
-    time.sleep(1)
+    time.sleep(0.1)
     GPIO.output(trig_right, True)
     time.sleep(0.0001)
     GPIO.output(trig_right, False)
