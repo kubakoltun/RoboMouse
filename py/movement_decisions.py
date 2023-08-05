@@ -1,15 +1,15 @@
 import RPi.GPIO as GPIO
 import time
 import threading
+
 # TODO speed does not change, I want to scale it (depending on the distance)
 # TODO while stopping or detecting any change in movement lower the speed gradually
 
-# 0.25 makes about 2.5 rotations with speed of 50
-# here the measuring speed seems to be decent its the reaction time and type that makes it bad
+# here the measuring speed seems to be decent it is the reaction time and type that makes it bad
 # usually the issue is that reaction time is about 5s after bumping into an object 
-# sometimes sensore just do not see the object and it continues running with 0 or large numbers 
-# need to focus on sensore work (0s seems to be ignored)
-# better logick for getting stuck - current does not work in any way
+# sometimes sensor just do not see the object - it continues running with 0 or large numbers
+# need to focus on sensor work (0s seems to be ignored)
+# better logic for getting stuck - current does not work in any way
 
 # SETUP
 # right wheel
@@ -33,7 +33,6 @@ GPIO.setup(enA, GPIO.OUT)
 GPIO.setup(in3B, GPIO.OUT)
 GPIO.setup(in4B, GPIO.OUT)
 GPIO.setup(enB, GPIO.OUT)
-
 
 # Define speed variables
 global_pwm_speed = 50
@@ -114,25 +113,21 @@ def distance_measurement():
     time.sleep(0.0001)
     GPIO.output(trig_right, False)
 
-    
+    pulse_start = 0
+    pulse_end = 0
 
-    pulse_start = 0;
-    pulse_end = 0;
-    
     while GPIO.input(echo_right) == 0:
         pulse_start = time.time()
     while GPIO.input(echo_right) == 1:
         pulse_end = time.time()
-        
-        
-    #pulse_start = GPIO.wait_for_edge(echo_right, GPIO.RISING, timeout=1000)
-    if pulse_start is None:
-        return float('inf')  
 
-    #pulse_end = GPIO.wait_for_edge(echo_right, GPIO.FALLING, timeout=1000)
+    # pulse_start = GPIO.wait_for_edge(echo_right, GPIO.RISING, timeout=1000)
+    if pulse_start is None:
+        return float('inf')
+
+        # pulse_end = GPIO.wait_for_edge(echo_right, GPIO.FALLING, timeout=1000)
     if pulse_end is None:
-        return float('inf')  
-	
+        return float('inf')
 
     pulse_duration = pulse_end - pulse_start
     distance = pulse_duration * 17150
@@ -154,7 +149,7 @@ def avoid_obstacle():
         print("Turning right")
         turn_right()
         # Wait for the robot to complete the turn - need to monitor how long does it take
-        time.sleep(0.25)
+        time.sleep(0.1)
 
         # Measure distance to the right after turning
         right_distance = distance_measurement()
@@ -168,7 +163,7 @@ def avoid_obstacle():
             # Not enough space on the right, perform a 180-degree turn to the left
             print("Performing a 180-degree turn to the left")
             turn_left()
-            time.sleep(0.5)
+            time.sleep(0.2)
 
             # Check the distance after the 180-degree turn
             right_distance = distance_measurement()
@@ -178,7 +173,7 @@ def avoid_obstacle():
                 # There's still an obstacle on both sides, turn left again to avoid it
                 print("Turning left again to avoid the obstacle")
                 turn_left()
-                time.sleep(0.25)
+                time.sleep(0.1)
 
     # Wait for a short duration before resuming forward movement
     time.sleep(0.5)
@@ -198,12 +193,27 @@ def main():
     global is_stuck, stuck_start_time
 
     try:
-        #threading.Thread(target=distance_monitoring_thread, daemon=True).start()
+        # threading.Thread(target=distance_monitoring_thread, daemon=True).start()
 
         while True:
-            distance = distance_measurement()
-            print("Distance: {} cm".format(distance))
+            direction = []
+            for path in range(5):
+                distance = distance_measurement()
+                print("Distance: {} cm".format(distance))
+                direction.append(distance)
+                turn_left()
+                time.sleep(0.1)
 
+            max_distance_index = direction.index(max(direction))
+
+            for longest_path in range(max_distance_index):
+                turn_right()
+                time.sleep(0.1)
+
+            move_forward()
+            time.sleep(0.5)
+
+            distance = distance_measurement()
             # Check if the robot is stuck
             if distance > max_distance:
                 # The robot is moving forward
@@ -236,15 +246,15 @@ def main():
                     is_stuck = True
                     # Recovery action
                     move_backward()
-                    time.sleep(0.5)
+                    time.sleep(0.25)
 
                     # Turn left to attempt to get unstuck
                     turn_left()
-                    time.sleep(0.25)
+                    time.sleep(0.1)
 
             # Continuous monitoring of distance - will it
-            #distance_monitoring_thread()
-            #time.sleep(0.1)
+            # distance_monitoring_thread()
+            # time.sleep(0.1)
 
     except KeyboardInterrupt:
         print("Program terminated by user.")
@@ -254,11 +264,11 @@ def main():
 
 
 # DISTANCE MEASUREMENT
-#def distance_monitoring_thread():
- #   while True:
-  #      distance = distance_measurement()
-   #     print("Distance: {} cm".format(distance))
-    #    time.sleep(0.1)
+# def distance_monitoring_thread():
+#   while True:
+#      distance = distance_measurement()
+#     print("Distance: {} cm".format(distance))
+#    time.sleep(0.1)
 # DISTANCE MEASUREMENT
 
 
