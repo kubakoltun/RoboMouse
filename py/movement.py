@@ -14,9 +14,9 @@ def main():
             distance = distance_measurement()
             print("Distance: {} cm".format(distance))
 
-            # Check if the robot is stuck
+            # Check if the robot.py is stuck
             if distance > max_distance:
-                # The robot is moving forward
+                # The robot.py is moving forward
                 is_stuck = False
                 stuck_start_time = 0
                 # Still need to implement a logic for scaling the speed
@@ -40,7 +40,7 @@ def main():
                 if stuck_start_time == 0:
                     stuck_start_time = time.time()
 
-                # Check if the robot is stuck for too long
+                # Check if the robot.py is stuck for too long
                 if time.time() - stuck_start_time > stuck_threshold:
                     print("Robot is stuck!")
                     is_stuck = True

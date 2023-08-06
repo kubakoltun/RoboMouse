@@ -148,7 +148,7 @@ def avoid_obstacle():
         # Perform the initial right turn
         print("Turning right")
         turn_right()
-        # Wait for the robot to complete the turn - need to monitor how long does it take
+        # Wait for the robot.py to complete the turn - need to monitor how long does it take
         time.sleep(0.1)
 
         # Measure distance to the right after turning
@@ -214,9 +214,9 @@ def main():
             time.sleep(0.5)
 
             distance = distance_measurement()
-            # Check if the robot is stuck
+            # Check if the robot.py is stuck
             if distance > max_distance:
-                # The robot is moving forward
+                # The robot.py is moving forward
                 is_stuck = False
                 stuck_start_time = 0
                 # Still need to implement a logic for scaling the speed
@@ -240,7 +240,7 @@ def main():
                 if stuck_start_time == 0:
                     stuck_start_time = time.time()
 
-                # Check if the robot is stuck for too long
+                # Check if the robot.py is stuck for too long
                 if time.time() - stuck_start_time > stuck_threshold:
                     print("Robot is stuck!")
                     is_stuck = True

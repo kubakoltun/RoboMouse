@@ -64,7 +64,7 @@ def avoid_obstacle():
         # Perform the initial right turn
         print("Turning right")
         turn_right()
-        # Wait for the robot to complete the turn - need to monitor how long does it take
+        # Wait for the robot.py to complete the turn - need to monitor how long does it take
         time.sleep(0.25)
 
         # Measure distance to the right after turning
