@@ -13,33 +13,33 @@ import threading
 
 # SETUP
 # right wheel
-in1A = 25
-in2A = 23
-enA = 12
+IN1A = 25
+IN2A = 23
+ENA = 12
 # left wheel
-in3B = 17
-in4B = 27
-enB = 13
+IN3B = 17
+IN4B = 27
+ENB = 13
 # sensor
-trig_right = 5
-echo_right = 6
+TRIG_RIGHT = 5
+ECHO_RIGHT = 6
 
 GPIO.setmode(GPIO.BCM)
 
-GPIO.setup(in1A, GPIO.OUT)
-GPIO.setup(in2A, GPIO.OUT)
-GPIO.setup(enA, GPIO.OUT)
+GPIO.setup(IN1A, GPIO.OUT)
+GPIO.setup(IN2A, GPIO.OUT)
+GPIO.setup(ENA, GPIO.OUT)
 
-GPIO.setup(in3B, GPIO.OUT)
-GPIO.setup(in4B, GPIO.OUT)
-GPIO.setup(enB, GPIO.OUT)
+GPIO.setup(IN3B, GPIO.OUT)
+GPIO.setup(IN4B, GPIO.OUT)
+GPIO.setup(ENB, GPIO.OUT)
 
 # Define speed variables
 global_pwm_speed = 50
 
-pA = GPIO.PWM(enA, 500)
+pA = GPIO.PWM(ENA, 500)
 pA.start(global_pwm_speed)
-pB = GPIO.PWM(enB, 500)
+pB = GPIO.PWM(ENB, 500)
 pB.start(global_pwm_speed)
 # SETUP
 
@@ -48,50 +48,50 @@ pB.start(global_pwm_speed)
 def move_backward():
     # pA.ChangeDutyCycle(pwm_speed)
     # pB.ChangeDutyCycle(pwm_speed)
-    GPIO.output(in1A, GPIO.HIGH)
-    GPIO.output(in2A, GPIO.LOW)
-    GPIO.output(in3B, GPIO.HIGH)
-    GPIO.output(in4B, GPIO.LOW)
+    GPIO.output(IN1A, GPIO.HIGH)
+    GPIO.output(IN2A, GPIO.LOW)
+    GPIO.output(IN3B, GPIO.HIGH)
+    GPIO.output(IN4B, GPIO.LOW)
     # time.sleep(sleep)
 
 
 def move_forward():
     # pA.ChangeDutyCycle(pwm_speed)
     # pB.ChangeDutyCycle(pwm_speed)
-    GPIO.output(in1A, GPIO.LOW)
-    GPIO.output(in2A, GPIO.HIGH)
-    GPIO.output(in3B, GPIO.LOW)
-    GPIO.output(in4B, GPIO.HIGH)
+    GPIO.output(IN1A, GPIO.LOW)
+    GPIO.output(IN2A, GPIO.HIGH)
+    GPIO.output(IN3B, GPIO.LOW)
+    GPIO.output(IN4B, GPIO.HIGH)
     # time.sleep(sleep)
 
 
 def turn_left():
     # pA.ChangeDutyCycle(pwm_speed)
     # pB.ChangeDutyCycle(pwm_speed)
-    GPIO.output(in1A, GPIO.HIGH)
-    GPIO.output(in2A, GPIO.LOW)
-    GPIO.output(in3B, GPIO.LOW)
-    GPIO.output(in4B, GPIO.HIGH)
+    GPIO.output(IN1A, GPIO.HIGH)
+    GPIO.output(IN2A, GPIO.LOW)
+    GPIO.output(IN3B, GPIO.LOW)
+    GPIO.output(IN4B, GPIO.HIGH)
     # time.sleep(sleep)
 
 
 def turn_right():
     # pA.ChangeDutyCycle(pwm_speed)
     # pB.ChangeDutyCycle(pwm_speed)
-    GPIO.output(in1A, GPIO.LOW)
-    GPIO.output(in2A, GPIO.HIGH)
-    GPIO.output(in3B, GPIO.HIGH)
-    GPIO.output(in4B, GPIO.LOW)
+    GPIO.output(IN1A, GPIO.LOW)
+    GPIO.output(IN2A, GPIO.HIGH)
+    GPIO.output(IN3B, GPIO.HIGH)
+    GPIO.output(IN4B, GPIO.LOW)
     # time.sleep(sleep)
 
 
 def stop():
     # pA.ChangeDutyCycle(pwm_speed)
     # pB.ChangeDutyCycle(pwm_speed)
-    GPIO.output(in1A, GPIO.LOW)
-    GPIO.output(in2A, GPIO.LOW)
-    GPIO.output(in3B, GPIO.LOW)
-    GPIO.output(in4B, GPIO.LOW)
+    GPIO.output(IN1A, GPIO.LOW)
+    GPIO.output(IN2A, GPIO.LOW)
+    GPIO.output(IN3B, GPIO.LOW)
+    GPIO.output(IN4B, GPIO.LOW)
     # time.sleep(sleep)
 # MANEUVERS
 
@@ -105,20 +105,20 @@ max_distance = 20
 
 # DISTANCE MEASUREMENT
 def distance_measurement():
-    GPIO.setup(trig_right, GPIO.OUT)
-    GPIO.setup(echo_right, GPIO.IN)
-    GPIO.output(trig_right, False)
+    GPIO.setup(TRIG_RIGHT, GPIO.OUT)
+    GPIO.setup(ECHO_RIGHT, GPIO.IN)
+    GPIO.output(TRIG_RIGHT, False)
     time.sleep(0.1)
-    GPIO.output(trig_right, True)
+    GPIO.output(TRIG_RIGHT, True)
     time.sleep(0.0001)
-    GPIO.output(trig_right, False)
+    GPIO.output(TRIG_RIGHT, False)
 
     pulse_start = 0
     pulse_end = 0
 
-    while GPIO.input(echo_right) == 0:
+    while GPIO.input(ECHO_RIGHT) == 0:
         pulse_start = time.time()
-    while GPIO.input(echo_right) == 1:
+    while GPIO.input(ECHO_RIGHT) == 1:
         pulse_end = time.time()
 
     # pulse_start = GPIO.wait_for_edge(echo_right, GPIO.RISING, timeout=1000)
@@ -185,12 +185,13 @@ def avoid_obstacle():
 stuck_threshold = 5
 stuck_start_time = 0
 is_stuck = False
+previous_distance = None
 # SETUP
 
 
 # MOVEMENT
 def main():
-    global is_stuck, stuck_start_time
+    global is_stuck, stuck_start_time, previous_distance
 
     try:
         # threading.Thread(target=distance_monitoring_thread, daemon=True).start()
@@ -214,7 +215,7 @@ def main():
             time.sleep(0.5)
 
             distance = distance_measurement()
-            # Check if the robot.py is stuck
+            # Check if the robot is stuck
             if distance > max_distance:
                 # The robot.py is moving forward
                 is_stuck = False
@@ -237,20 +238,30 @@ def main():
 
             # Check for stuck condition
             if not is_stuck and distance <= max_distance:
-                if stuck_start_time == 0:
-                    stuck_start_time = time.time()
+                if previous_distance is None:
+                    previous_distance = distance
 
-                # Check if the robot.py is stuck for too long
-                if time.time() - stuck_start_time > stuck_threshold:
-                    print("Robot is stuck!")
-                    is_stuck = True
-                    # Recovery action
-                    move_backward()
-                    time.sleep(0.25)
+                # Check if the distance is not changing significantly
+                if abs(distance - previous_distance) < 2:  # Adjust the threshold as needed
+                    if stuck_start_time == 0:
+                        stuck_start_time = time.time()
 
-                    # Turn left to attempt to get unstuck
-                    turn_left()
-                    time.sleep(0.1)
+                    # Check if the robot is stuck for too long
+                    if time.time() - stuck_start_time > stuck_threshold:
+                        print("Robot is stuck!")
+                        is_stuck = True
+                        # Recovery action
+                        move_backward()
+                        time.sleep(0.25)
+
+                        # Turn left to attempt to get unstuck
+                        turn_left()
+                        time.sleep(0.1)
+                else:
+                    # Distance is changing, reset stuck variables
+                    is_stuck = False
+                    stuck_start_time = 0
+                    previous_distance = distance
 
             # Continuous monitoring of distance - will it
             # distance_monitoring_thread()
