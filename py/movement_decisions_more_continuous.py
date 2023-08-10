@@ -2,15 +2,6 @@ import RPi.GPIO as GPIO
 import time
 import threading
 
-# TODO speed does not change, I want to scale it (depending on the distance)
-# TODO while stopping or detecting any change in movement lower the speed gradually
-
-# here the measuring speed seems to be decent it is the reaction time and type that makes it bad
-# usually the issue is that reaction time is about 5s after bumping into an object 
-# sometimes sensor just do not see the object - it continues running with 0 or large numbers
-# need to focus on sensor work (0s seems to be ignored)
-# better logic for getting stuck - current does not work in any way
-
 # SETUP
 # right wheel
 IN1A = 25
@@ -34,65 +25,47 @@ GPIO.setup(IN3B, GPIO.OUT)
 GPIO.setup(IN4B, GPIO.OUT)
 GPIO.setup(ENB, GPIO.OUT)
 
-# define speed variable
-global_pwm_speed = 50
-
-pA = GPIO.PWM(ENA, 500)
-pA.start(global_pwm_speed)
-pB = GPIO.PWM(ENB, 500)
-pB.start(global_pwm_speed)
+right_motor_speed = GPIO.PWM(ENA, 500)
+right_motor_speed.start(0)
+left_motor_speed = GPIO.PWM(ENB, 500)
+left_motor_speed.start(0)
 # SETUP
 
 
 # MANEUVERS
 def move_backward():
-    # pA.ChangeDutyCycle(pwm_speed)
-    # pB.ChangeDutyCycle(pwm_speed)
     GPIO.output(IN1A, GPIO.HIGH)
     GPIO.output(IN2A, GPIO.LOW)
     GPIO.output(IN3B, GPIO.HIGH)
     GPIO.output(IN4B, GPIO.LOW)
-    # time.sleep(sleep)
 
 
 def move_forward():
-    # pA.ChangeDutyCycle(pwm_speed)
-    # pB.ChangeDutyCycle(pwm_speed)
     GPIO.output(IN1A, GPIO.LOW)
     GPIO.output(IN2A, GPIO.HIGH)
     GPIO.output(IN3B, GPIO.LOW)
     GPIO.output(IN4B, GPIO.HIGH)
-    # time.sleep(sleep)
 
 
 def turn_left():
-    # pA.ChangeDutyCycle(pwm_speed)
-    # pB.ChangeDutyCycle(pwm_speed)
     GPIO.output(IN1A, GPIO.HIGH)
     GPIO.output(IN2A, GPIO.LOW)
     GPIO.output(IN3B, GPIO.LOW)
     GPIO.output(IN4B, GPIO.HIGH)
-    # time.sleep(sleep)
 
 
 def turn_right():
-    # pA.ChangeDutyCycle(pwm_speed)
-    # pB.ChangeDutyCycle(pwm_speed)
     GPIO.output(IN1A, GPIO.LOW)
     GPIO.output(IN2A, GPIO.HIGH)
     GPIO.output(IN3B, GPIO.HIGH)
     GPIO.output(IN4B, GPIO.LOW)
-    # time.sleep(sleep)
 
 
 def stop():
-    # pA.ChangeDutyCycle(pwm_speed)
-    # pB.ChangeDutyCycle(pwm_speed)
     GPIO.output(IN1A, GPIO.LOW)
     GPIO.output(IN2A, GPIO.LOW)
     GPIO.output(IN3B, GPIO.LOW)
     GPIO.output(IN4B, GPIO.LOW)
-    # time.sleep(sleep)
 # MANEUVERS
 
 
@@ -114,11 +87,9 @@ def distance_measurement():
     while GPIO.input(ECHO_RIGHT) == 1:
         pulse_end = time.time()
 
-    # pulse_start = GPIO.wait_for_edge(echo_right, GPIO.RISING, timeout=1000)
     if pulse_start is None:
         return 0
 
-        # pulse_end = GPIO.wait_for_edge(echo_right, GPIO.FALLING, timeout=1000)
     if pulse_end is None:
         return 0
 
@@ -157,44 +128,46 @@ stuck_start_time = 0
 is_stuck = False
 previous_distance = None
 
-# Define distance thresholds
-min_distance = 7
-max_distance = 20
+# Define distance thresholds for activating appropriate response speed
+rapid_turn = 7
+slight_turn = 40
+
+extensible_speed = 25
 # SETUP
 
 
 # MOVEMENT
 def main():
-    global is_stuck, stuck_start_time, previous_distance
+    global is_stuck, stuck_start_time, previous_distance, extensible_speed
+
+    extensible_speed = 25
 
     try:
-        # threading.Thread(target=distance_monitoring_thread, daemon=True).start()
-
         while True:
-            avoid_obstacle()
+            # avoid_obstacle()
             distance = distance_measurement()
-            if distance > max_distance:
-                # The robot is moving forward
-                is_stuck = False
-                # stuck_start_time = 0
-                # Still need to implement a logic for scaling the speed
-                # pA.ChangeDutyCycle(global_pwm_speed)
-                # pB.ChangeDutyCycle(global_pwm_speed)
-                move_forward()
-            elif min_distance < distance <= max_distance:
-                # Obstacle detected, initiate obstacle avoidance
-                is_stuck = False
-                # stuck_start_time = 0
-                avoid_obstacle()
+            move_forward()
+            right_motor_speed.ChangeDutyCycle(25)
+            left_motor_speed.ChangeDutyCycle(25)
+
+            if distance > slight_turn:
+                right_motor_speed.ChangeDutyCycle(extensible_speed)
+                left_motor_speed.ChangeDutyCycle(extensible_speed)
+                if extensible_speed < 75:
+                    extensible_speed += 1
+            elif rapid_turn < distance <= slight_turn:
+                # Begin slightly turning right
+                right_motor_speed.ChangeDutyCycle(25)
+                left_motor_speed.ChangeDutyCycle(30)
+                # I do not know where to turn best yet
             else:
-                # Obstacle too close, stop and wait
-                is_stuck = False
-                # stuck_start_time = 0
-                stop()
+                # Rapidly turn left
+                right_motor_speed.ChangeDutyCycle(50)
+                left_motor_speed.ChangeDutyCycle(10)
                 time.sleep(0.1)
 
             # Check for stuck condition
-            if not is_stuck and distance <= max_distance:
+            if not is_stuck and distance <= slight_turn:
                 if previous_distance is None:
                     previous_distance = distance
 
@@ -223,27 +196,12 @@ def main():
                     stuck_start_time = 0
                     previous_distance = distance
 
-            # Continuous monitoring of distance - will it
-            # distance_monitoring_thread()
-            # time.sleep(0.1)
-
     except KeyboardInterrupt:
         print("Program terminated by user.")
     finally:
         GPIO.cleanup()
-# MOVEMENT
 
 
-# DISTANCE MEASUREMENT
-# def distance_monitoring_thread():
-#   while True:
-#      distance = distance_measurement()
-#     print("Distance: {} cm".format(distance))
-#    time.sleep(0.1)
-# DISTANCE MEASUREMENT
-
-
-# MOVEMENT
 if __name__ == "__main__":
     main()
 # MOVEMENT
