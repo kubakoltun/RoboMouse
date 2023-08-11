@@ -1,10 +1,5 @@
-import RPi.GPIO as GPIO
-import pygame
 import math
 import numpy as np
-
-
-# pip install
 
 
 def distance(point1, point2):
@@ -16,7 +11,7 @@ def distance(point1, point2):
 class Robot:
     def __init__(self, startpos, width):
 
-        self.m2p = 3779.52  # startpos I supose
+        self.m2p = 3779.52
         # robot dims
         self.w = width
 
