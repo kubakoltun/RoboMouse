@@ -2,44 +2,43 @@ import RPi.GPIO as GPIO
 
 
 # right wheel
-in1A = 25
-in2A = 23
-enA = 12
+IN1A = 25
+IN2A = 23
+ENA = 12
 # left wheel
-in3B = 17
-in4B = 27
-enB = 13
+IN3B = 17
+IN4B = 27
+ENB = 13
 # sensor
-trig_right = 5
-echo_right = 6
+TRIG_RIGHT = 5
+ECHO_RIGHT = 6
 
 GPIO.setmode(GPIO.BCM)
+# right wheel setup
+GPIO.setup(IN1A, GPIO.OUT)
+GPIO.setup(IN2A, GPIO.OUT)
+GPIO.setup(ENA, GPIO.OUT)
+# left wheel setup
+GPIO.setup(IN3B, GPIO.OUT)
+GPIO.setup(IN4B, GPIO.OUT)
+GPIO.setup(ENB, GPIO.OUT)
 
-GPIO.setup(in1A, GPIO.OUT)
-GPIO.setup(in2A, GPIO.OUT)
-GPIO.setup(enA, GPIO.OUT)
-
-GPIO.setup(in3B, GPIO.OUT)
-GPIO.setup(in4B, GPIO.OUT)
-GPIO.setup(enB, GPIO.OUT)
-
-
-# Define speed variables
+# define speed variable
 global_pwm_speed = 50
 
-pA = GPIO.PWM(enA, 500)
+pA = GPIO.PWM(ENA, 500)
 pA.start(global_pwm_speed)
-pB = GPIO.PWM(enB, 500)
+pB = GPIO.PWM(ENB, 500)
 pB.start(global_pwm_speed)
 
+
+# Define the time threshold for stuck detection (in seconds)
+stuck_threshold = 2
+stuck_start_time = 0
+is_stuck = False
+previous_distance = None
 
 # Define distance thresholds
 min_distance = 7
 max_distance = 20
-
-
-# Define the time threshold for stuck detection (in seconds)
-stuck_threshold = 5
-stuck_start_time = 0
-is_stuck = False
 

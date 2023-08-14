@@ -45,16 +45,6 @@ pB.start(global_pwm_speed)
 
 
 # MANEUVERS
-def move_backward():
-    # pA.ChangeDutyCycle(pwm_speed)
-    # pB.ChangeDutyCycle(pwm_speed)
-    GPIO.output(IN1A, GPIO.HIGH)
-    GPIO.output(IN2A, GPIO.LOW)
-    GPIO.output(IN3B, GPIO.HIGH)
-    GPIO.output(IN4B, GPIO.LOW)
-    # time.sleep(sleep)
-
-
 def move_forward():
     # pA.ChangeDutyCycle(pwm_speed)
     # pB.ChangeDutyCycle(pwm_speed)
@@ -62,6 +52,16 @@ def move_forward():
     GPIO.output(IN2A, GPIO.HIGH)
     GPIO.output(IN3B, GPIO.LOW)
     GPIO.output(IN4B, GPIO.HIGH)
+    # time.sleep(sleep)
+
+
+def move_backward():
+    # pA.ChangeDutyCycle(pwm_speed)
+    # pB.ChangeDutyCycle(pwm_speed)
+    GPIO.output(IN1A, GPIO.HIGH)
+    GPIO.output(IN2A, GPIO.LOW)
+    GPIO.output(IN3B, GPIO.HIGH)
+    GPIO.output(IN4B, GPIO.LOW)
     # time.sleep(sleep)
 
 
