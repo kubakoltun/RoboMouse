@@ -2,8 +2,6 @@ import RPi.GPIO as GPIO
 import time
 import threading
 
-# TODO speed does not change, I want to scale it (depending on the distance)
-# TODO while stopping or detecting any change in movement lower the speed gradually
 
 # here the measuring speed seems to be decent it is the reaction time and type that makes it bad
 # usually the issue is that reaction time is about 5s after bumping into an object 
@@ -12,6 +10,16 @@ import threading
 # better logic for getting stuck - current does not work in any way
 
 # SETUP
+# Define the time threshold for stuck detection (in seconds)
+stuck_start_time = 0
+is_stuck = False
+previous_distance = None
+
+# Define thresholds
+MIN_DISTANCE = 7
+MAX_DISTANCE = 20
+STUCK_THRESHOLD = 2
+
 # right wheel
 IN1A = 25
 IN2A = 23
@@ -148,19 +156,6 @@ def avoid_obstacle():
     move_forward()
     time.sleep(0.5)
 # MANEUVERS
-
-
-# SETUP
-# Define the time threshold for stuck detection (in seconds)
-stuck_threshold = 2
-stuck_start_time = 0
-is_stuck = False
-previous_distance = None
-
-# Define distance thresholds
-min_distance = 7
-max_distance = 20
-# SETUP
 
 
 # MOVEMENT
