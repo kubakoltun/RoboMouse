@@ -3,6 +3,17 @@ import time
 import threading
 
 # SETUP
+# Define the time threshold for stuck detection (in seconds)
+stuck_start_time = 0
+is_stuck = False
+previous_distance = None
+STUCK_THRESHOLD = 2
+
+# Define distance thresholds for activating appropriate response speed
+RAPID_TURN = 7
+SLIGHT_TURN = 40
+extensible_speed = 25
+
 # right wheel
 IN1A = 25
 IN2A = 23
@@ -119,21 +130,6 @@ def avoid_obstacle():
     move_forward()
     time.sleep(0.5)
 # MANEUVERS
-
-
-# SETUP
-# Define the time threshold for stuck detection (in seconds)
-stuck_threshold = 2
-stuck_start_time = 0
-is_stuck = False
-previous_distance = None
-
-# Define distance thresholds for activating appropriate response speed
-rapid_turn = 7
-slight_turn = 40
-
-extensible_speed = 25
-# SETUP
 
 
 # MOVEMENT
