@@ -1,10 +1,8 @@
 import RPi.GPIO as GPIO
 import time 
 
-
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-
 
 trig_right = 5
 echo_right = 6
