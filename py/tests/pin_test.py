@@ -1,7 +1,6 @@
 import RPi.GPIO as GPIO
 import time
 
-
 left_wheel_pin1 = 23
 left_wheel_pin2 = 24
 left_en = 25
@@ -28,7 +27,7 @@ def move_backward():
 	GPIO.output(left_wheel_pin2, GPIO.HIGH)
 	
 	
-print("Should move forward")
+print("Moving forward")
 move_forward()
 time.sleep(2)
 
