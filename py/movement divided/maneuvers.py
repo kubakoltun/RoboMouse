@@ -2,55 +2,39 @@ import RPi.GPIO as GPIO
 from distance_measurement import *
 import time
 
-
 def move_forward():
-    # pA.ChangeDutyCycle(pwm_speed)
-    # pB.ChangeDutyCycle(pwm_speed)
     GPIO.output(IN1A, GPIO.LOW)
     GPIO.output(IN2A, GPIO.HIGH)
     GPIO.output(IN3B, GPIO.LOW)
     GPIO.output(IN4B, GPIO.HIGH)
-    # time.sleep(sleep)
 
 
 def move_backward():
-    # pA.ChangeDutyCycle(pwm_speed)
-    # pB.ChangeDutyCycle(pwm_speed)
     GPIO.output(IN1A, GPIO.HIGH)
     GPIO.output(IN2A, GPIO.LOW)
     GPIO.output(IN3B, GPIO.HIGH)
     GPIO.output(IN4B, GPIO.LOW)
-    # time.sleep(sleep)
 
 
 def turn_left():
-    # pA.ChangeDutyCycle(pwm_speed)
-    # pB.ChangeDutyCycle(pwm_speed)
     GPIO.output(IN1A, GPIO.HIGH)
     GPIO.output(IN2A, GPIO.LOW)
     GPIO.output(IN3B, GPIO.LOW)
     GPIO.output(IN4B, GPIO.HIGH)
-    # time.sleep(sleep)
 
 
 def turn_right():
-    # pA.ChangeDutyCycle(pwm_speed)
-    # pB.ChangeDutyCycle(pwm_speed)
     GPIO.output(IN1A, GPIO.LOW)
     GPIO.output(IN2A, GPIO.HIGH)
     GPIO.output(IN3B, GPIO.HIGH)
     GPIO.output(IN4B, GPIO.LOW)
-    # time.sleep(sleep)
 
 
 def stop():
-    # pA.ChangeDutyCycle(pwm_speed)
-    # pB.ChangeDutyCycle(pwm_speed)
     GPIO.output(IN1A, GPIO.LOW)
     GPIO.output(IN2A, GPIO.LOW)
     GPIO.output(IN3B, GPIO.LOW)
     GPIO.output(IN4B, GPIO.LOW)
-    # time.sleep(sleep)
 
 
 def avoid_obstacle():
