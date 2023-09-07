@@ -1,13 +1,10 @@
 import RPi.GPIO as GPIO
 from maneuvers import *
 
-
 def main():
     global is_stuck, stuck_start_time, previous_distance
 
     try:
-        # threading.Thread(target=distance_monitoring_thread, daemon=True).start()
-
         while True:
             avoid_obstacle()
             distance = distance_measurement()
@@ -60,10 +57,6 @@ def main():
                     is_stuck = False
                     stuck_start_time = 0
                     previous_distance = distance
-
-            # Continuous monitoring of distance - will it
-            # distance_monitoring_thread()
-            # time.sleep(0.1)
 
     except KeyboardInterrupt:
         print("Program terminated by user.")
