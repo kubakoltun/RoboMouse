@@ -1,6 +1,5 @@
 import RPi.GPIO as GPIO
 
-
 # right wheel
 IN1A = 25
 IN2A = 23
