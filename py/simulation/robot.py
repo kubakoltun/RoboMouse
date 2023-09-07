@@ -1,7 +1,6 @@
 import math
 import numpy as np
 
-
 def distance(point1, point2):
     point1 = np.array(point1)
     point2 = np.array(point2)
@@ -10,7 +9,6 @@ def distance(point1, point2):
 
 class Robot:
     def __init__(self, startpos, width):
-
         self.m2p = 3779.52
         # robot dims
         self.w = width
@@ -28,6 +26,7 @@ class Robot:
         self.min_obs_dist = 100
         self.count_down = 5
 
+    
     def avoid_obstacles(self, point_cloud, dt):
         closest_obs = None
         dist = np.inf
@@ -45,14 +44,17 @@ class Robot:
                 self.count_down = 5
                 self.move_forward()
 
+    
     def move_backward(self):
         self.vr = - self.minspeed
         self.vl = - self.minspeed/2
 
+    
     def move_forward(self):
         self.vr = - self.minspeed
         self.vl = - self.minspeed
 
+    
     def kinematics(self, dt):
         self.x += ((self.vl+self.vr)/2) * math.cos(self.heading) * dt
         self.y += ((self.vl+self.vr)/2) * math.sin(self.heading) * dt
