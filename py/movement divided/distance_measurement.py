@@ -2,7 +2,6 @@ import RPi.GPIO as GPIO
 import time
 from setup import *
 
-
 def distance_measurement():
     GPIO.setup(TRIG_RIGHT, GPIO.OUT)
     GPIO.setup(ECHO_RIGHT, GPIO.IN)
@@ -32,4 +31,3 @@ def distance_measurement():
     distance = pulse_duration * 17150
     distance = round(distance, 2)
     return distance
-
