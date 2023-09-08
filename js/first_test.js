@@ -2,13 +2,13 @@ const Gpio = require('onoff').Gpio;
 const sleep = require('util').promisify(setTimeout);
 
 // right wheel
-const in1A = new Gpio(24, 'out');
+const in1A = new Gpio(25, 'out');
 const in2A = new Gpio(23, 'out');
-const enA = new Gpio(25, 'out');
+const enA = new Gpio(12, 'out');
 // left wheel
 const in3B = new Gpio(17, 'out');
 const in4B = new Gpio(27, 'out');
-const enB = new Gpio(22, 'out');
+const enB = new Gpio(13, 'out');
 
 const move_forward = () => {
   in1A.writeSync(1);
