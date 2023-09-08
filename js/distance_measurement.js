@@ -1,7 +1,6 @@
 const pigpio = require('pigpio-client')().then((pi) => {
   const trigRight = 5
   const echoRight = 6
-
   pi.gpio(trigRight).modeSet('output');
   pi.gpio(echoRight).modeSet('input');
 
@@ -13,8 +12,8 @@ const pigpio = require('pigpio-client')().then((pi) => {
     pi.gpio(trigRight).digitalWrite(1);
     setTimeout(() => {
       pi.gpio(trigRight).digitalWrite(0);
-
       let pulseStart;
+      
       while (pi.gpio(echoRight).digitalRead() === 0) {
         pulseStart = process.hrtime.bigint();
       }
