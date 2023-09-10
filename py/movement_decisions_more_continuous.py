@@ -2,6 +2,11 @@ import RPi.GPIO as GPIO
 import time
 import threading
 
+# there is an issue with the search of the longest path it gets stuck and just keeps spining to the left
+# possibly beacuse the distances where simular and too short
+# stuck logic does not work every time (mainly when both sensors are completely covered up) 
+# it may turn too gently which couses it to poke objects with its wheels 
+
 # SETUP
 # Define the time threshold for stuck detection (in seconds)
 stuck_start_time = 0
@@ -98,10 +103,10 @@ def distance_measurement():
     while GPIO.input(ECHO_RIGHT) == 1:
         pulse_end = time.time()
 
-    if pulse_start is None:
+    if (pulse_start is None) or (pulse_start == 0):
         return 0
 
-    if pulse_end is None:
+    if (pulse_end is None) or (pulse_end == 0):
         return 0
 
     pulse_duration = pulse_end - pulse_start
@@ -141,47 +146,55 @@ def main():
     try:
         while True:
             # avoid_obstacle()
+            print("LOOP STARTED")
             distance = distance_measurement()
-            move_forward()
+            print("Distance {}, moving forward".format(distance))
             right_motor_speed.ChangeDutyCycle(25)
             left_motor_speed.ChangeDutyCycle(25)
+            move_forward()
 
-            if distance > slight_turn:
+            if distance > SLIGHT_TURN:
+                print("Can proceed current movement (distance > SLIGHT_TURN)")
                 right_motor_speed.ChangeDutyCycle(extensible_speed)
                 left_motor_speed.ChangeDutyCycle(extensible_speed)
                 if extensible_speed < 75:
                     extensible_speed += 1
-            elif rapid_turn < distance <= slight_turn:
-                # Begin slightly turning right
+            elif RAPID_TURN < distance <= SLIGHT_TURN:
+                # Begin turning slightly to the right
+                print("Dropping down the speed and going right (RAPID_TURN < distance <= SLIGHT_TURN)")
                 right_motor_speed.ChangeDutyCycle(25)
                 left_motor_speed.ChangeDutyCycle(30)
                 # I do not know where to turn best yet
             else:
                 # Rapidly turn left
+                print("Turning rapidly to the left")
                 right_motor_speed.ChangeDutyCycle(50)
                 left_motor_speed.ChangeDutyCycle(10)
                 time.sleep(0.1)
 
             # Check for stuck condition
-            if not is_stuck and distance <= slight_turn:
+            if not is_stuck and distance <= SLIGHT_TURN:
                 if previous_distance is None:
                     previous_distance = distance
 
                 # Check if the distance is not changing significantly
                 distance = distance_measurement()
-                if abs(distance - previous_distance) < 2:  # Adjust the threshold as needed
+                if abs(distance - previous_distance) < 2:  
                     if stuck_start_time == 0:
+                        print("Statring to count whether its stuck")
                         stuck_start_time = time.time()
 
                     # Check if the robot is stuck for too long
-                    if time.time() - stuck_start_time > stuck_threshold:
-                        print("Robot is stuck!")
+                    if time.time() - stuck_start_time > STUCK_THRESHOLD:
+                        print(f"Robot is stuck! {time.time} - {stuck_start_time} > {STUCK_THRESHOLD}")
                         is_stuck = True
                         # Recovery action
+                        print("Recover - back")
                         move_backward()
-                        time.sleep(0.25)
+                        time.sleep(0.5)
 
                         # Turn left to attempt to get unstuck
+                        print("Recover - left")
                         turn_left()
                         time.sleep(0.1)
                         stuck_start_time = 0
