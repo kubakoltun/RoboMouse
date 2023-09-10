@@ -2,11 +2,6 @@ import RPi.GPIO as GPIO
 import time
 import threading
 
-
-# here the measuring speed seems to be decent it is the reaction time and type that makes it bad
-# usually the issue is that reaction time is about 5s after bumping into an object 
-# sometimes sensor just do not see the object - it continues running with 0 or large numbers
-# need to focus on sensor work (0s seems to be ignored)
 # better logic for getting stuck - current does not work in any way
 
 # SETUP
@@ -123,11 +118,11 @@ def distance_measurement():
         pulse_end = time.time()
 
     # pulse_start = GPIO.wait_for_edge(echo_right, GPIO.RISING, timeout=1000)
-    if pulse_start is None:
+    if (pulse_start is None) or (pulse_start == 0):
         return 0
 
         # pulse_end = GPIO.wait_for_edge(echo_right, GPIO.FALLING, timeout=1000)
-    if pulse_end is None:
+    if (pulse_end is None) or (pulse_end == 0):
         return 0
 
     pulse_duration = pulse_end - pulse_start
@@ -205,7 +200,7 @@ def main():
                         is_stuck = True
                         # Recovery action
                         move_backward()
-                        time.sleep(0.25)
+                        time.sleep(0.5)
 
                         # Turn left to attempt to get unstuck
                         turn_left()
@@ -218,27 +213,12 @@ def main():
                     stuck_start_time = 0
                     previous_distance = distance
 
-            # Continuous monitoring of distance - will it
-            # distance_monitoring_thread()
-            # time.sleep(0.1)
-
     except KeyboardInterrupt:
         print("Program terminated by user.")
     finally:
         GPIO.cleanup()
-# MOVEMENT
+        
 
-
-# DISTANCE MEASUREMENT
-# def distance_monitoring_thread():
-#   while True:
-#      distance = distance_measurement()
-#     print("Distance: {} cm".format(distance))
-#    time.sleep(0.1)
-# DISTANCE MEASUREMENT
-
-
-# MOVEMENT
 if __name__ == "__main__":
     main()
 # MOVEMENT
