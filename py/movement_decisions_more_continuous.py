@@ -143,7 +143,7 @@ def avoid_obstacle():
 def main():
     global is_stuck, stuck_start_time, previous_distance, extensible_speed
 
-    extensible_speed = 25
+    extensible_speed = 75
 
     try:
         while True:
@@ -159,57 +159,57 @@ def main():
                 print("Can proceed current movement (distance > SLIGHT_TURN)")
                 right_motor_speed.ChangeDutyCycle(extensible_speed)
                 left_motor_speed.ChangeDutyCycle(extensible_speed)
-                if extensible_speed < 75:
+                if extensible_speed < 100:
                     extensible_speed += 1
             elif RAPID_TURN < distance <= SLIGHT_TURN:
                 # Begin turning slightly to the right
                 print("Dropping down the speed and going right (RAPID_TURN < distance <= SLIGHT_TURN)")
-                right_motor_speed.ChangeDutyCycle(25)
-                left_motor_speed.ChangeDutyCycle(30)
+                right_motor_speed.ChangeDutyCycle(extensible_speed)
+                left_motor_speed.ChangeDutyCycle(extensible_speed+10)
                 # I do not know where to turn best yet
             elif POSSIBLY_STUCK < distance <= RAPID_TURN:
                 # Rapidly turn left
                 print("Turning rapidly to the left")
-                right_motor_speed.ChangeDutyCycle(50)
-                left_motor_speed.ChangeDutyCycle(10)
+                right_motor_speed.ChangeDutyCycle(extensible_speed+20)
+                left_motor_speed.ChangeDutyCycle(extensible_speed)
                 time.sleep(0.1)
             elif distance <= POSSIBLY_STUCK:
-                right_motor_speed.ChangeDutyCycle(25)
-                left_motor_speed.ChangeDutyCycle(25)
+                right_motor_speed.ChangeDutyCycle(extensible_speed)
+                left_motor_speed.ChangeDutyCycle(extensible_speed)
                 avoid_obstacle()
 
-            # Check for stuck condition
-            if not is_stuck and distance <= SLIGHT_TURN:
-                if previous_distance is None:
-                    previous_distance = distance
-
-                # Check if the distance is not changing significantly
-                distance = distance_measurement()
-                if abs(distance - previous_distance) < 2:  
-                    if stuck_start_time == 0:
-                        print("Starting to count whether its stuck")
-                        stuck_start_time = time.time()
-
-                    # Check if the robot is stuck for too long
-                    if time.time() - stuck_start_time > STUCK_THRESHOLD:
-                        print(f"Robot is stuck! {time.time} - {stuck_start_time} > {STUCK_THRESHOLD}")
-                        is_stuck = True
-                        # Recovery action
-                        print("Recover - back")
-                        move_backward()
-                        time.sleep(0.5)
-
-                        # Turn left to attempt to get unstuck
-                        print("Recover - left")
-                        turn_left()
-                        time.sleep(0.1)
-                        stuck_start_time = 0
-                        is_stuck = False
-                else:
-                    # Distance is changing, reset stuck variables
-                    is_stuck = False
-                    stuck_start_time = 0
-                    previous_distance = distance
+            # # Check for stuck condition
+            # if not is_stuck and distance <= SLIGHT_TURN:
+            #     if previous_distance is None:
+            #         previous_distance = distance
+            #
+            #     # Check if the distance is not changing significantly
+            #     distance = distance_measurement()
+            #     if abs(distance - previous_distance) < 2:
+            #         if stuck_start_time == 0:
+            #             print("Starting to count whether its stuck")
+            #             stuck_start_time = time.time()
+            #
+            #         # Check if the robot is stuck for too long
+            #         if time.time() - stuck_start_time > STUCK_THRESHOLD:
+            #             print(f"Robot is stuck! {time.time} - {stuck_start_time} > {STUCK_THRESHOLD}")
+            #             is_stuck = True
+            #             # Recovery action
+            #             print("Recover - back")
+            #             move_backward()
+            #             time.sleep(0.5)
+            #
+            #             # Turn left to attempt to get unstuck
+            #             print("Recover - left")
+            #             turn_left()
+            #             time.sleep(0.1)
+            #             stuck_start_time = 0
+            #             is_stuck = False
+            #     else:
+            #         # Distance is changing, reset stuck variables
+            #         is_stuck = False
+            #         stuck_start_time = 0
+            #         previous_distance = distance
 
     except KeyboardInterrupt:
         print("Program terminated by user.")
