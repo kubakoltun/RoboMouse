@@ -120,21 +120,19 @@ def avoid_obstacle():
     move_backward()
     time.sleep(0.5)
     direction = []
-    for path in range(5):
+
+    for path in range(4):
         distance = distance_measurement()
         print("Distance: {} cm".format(distance))
         direction.append(distance)
         turn_left()
         time.sleep(0.1)
 
-    max_distance_index = direction.index(max(direction))
+    max_distance_position = direction.index(max(direction))+1
 
-    for longest_path in range(max_distance_index):
-        turn_right()
+    for longest_path in range(max_distance_position):
+        turn_left()
         time.sleep(0.1)
-
-    move_forward()
-    time.sleep(0.5)
 # MANEUVERS
 
 
@@ -172,7 +170,8 @@ def main():
                 right_motor_speed.ChangeDutyCycle(extensible_speed+20)
                 left_motor_speed.ChangeDutyCycle(extensible_speed)
                 time.sleep(0.1)
-            elif distance <= POSSIBLY_STUCK:
+            else:
+                # Assuming that the distance requires finding a new path
                 right_motor_speed.ChangeDutyCycle(extensible_speed)
                 left_motor_speed.ChangeDutyCycle(extensible_speed)
                 avoid_obstacle()
