@@ -16,6 +16,7 @@ STUCK_THRESHOLD = 2
 # Define distance thresholds for activating appropriate response speed
 RAPID_TURN = 7
 SLIGHT_TURN = 40
+POSSIBLY_STUCK = 2
 extensible_speed = 25
 
 # right wheel
@@ -117,6 +118,8 @@ def distance_measurement():
 
 # MANEUVERS
 def avoid_obstacle():
+    move_backward()
+    time.sleep(0.5)
     direction = []
     for path in range(5):
         distance = distance_measurement()
@@ -164,7 +167,13 @@ def main():
                 right_motor_speed.ChangeDutyCycle(25)
                 left_motor_speed.ChangeDutyCycle(30)
                 # I do not know where to turn best yet
-            else:
+            elif POSSIBLY_STUCK < distance <= RAPID_TURN:
+                # Rapidly turn left
+                print("Turning rapidly to the left")
+                right_motor_speed.ChangeDutyCycle(50)
+                left_motor_speed.ChangeDutyCycle(10)
+                time.sleep(0.1)
+            elif distance <= POSSIBLY_STUCK:
                 right_motor_speed.ChangeDutyCycle(25)
                 left_motor_speed.ChangeDutyCycle(25)
                 avoid_obstacle()
