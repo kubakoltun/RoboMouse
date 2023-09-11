@@ -1,8 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 
-# there is an issue with the search of the longest path it gets stuck and just keeps spining to the left
-# possibly because the distances where simular and too short
+# pwm lower than 75 sometimes does not supply enough power
 # stuck logic does not work every time (mainly when both sensors are completely covered up) 
 # it may turn too gently which causes it to poke objects with its wheels
 
@@ -159,8 +158,8 @@ def main():
                 print("Can proceed current movement (distance > SLIGHT_TURN)")
                 right_motor_speed.ChangeDutyCycle(extensible_speed)
                 left_motor_speed.ChangeDutyCycle(extensible_speed)
-                if extensible_speed < 100:
-                    extensible_speed += 1
+                # if extensible_speed < 100:
+                #     extensible_speed += 1
             elif RAPID_TURN < distance <= SLIGHT_TURN:
                 # Begin turning slightly to the right
                 print("Dropping down the speed and going right (RAPID_TURN < distance <= SLIGHT_TURN)")
