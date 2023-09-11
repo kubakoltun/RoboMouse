@@ -1,11 +1,10 @@
 import RPi.GPIO as GPIO
 import time
-import threading
 
 # there is an issue with the search of the longest path it gets stuck and just keeps spining to the left
-# possibly beacuse the distances where simular and too short
+# possibly because the distances where simular and too short
 # stuck logic does not work every time (mainly when both sensors are completely covered up) 
-# it may turn too gently which couses it to poke objects with its wheels 
+# it may turn too gently which causes it to poke objects with its wheels
 
 # SETUP
 # Define the time threshold for stuck detection (in seconds)
@@ -149,8 +148,8 @@ def main():
             print("LOOP STARTED")
             distance = distance_measurement()
             print("Distance {}, moving forward".format(distance))
-            right_motor_speed.ChangeDutyCycle(25)
-            left_motor_speed.ChangeDutyCycle(25)
+            right_motor_speed.ChangeDutyCycle(extensible_speed)
+            left_motor_speed.ChangeDutyCycle(extensible_speed)
             move_forward()
 
             if distance > SLIGHT_TURN:
@@ -166,11 +165,9 @@ def main():
                 left_motor_speed.ChangeDutyCycle(30)
                 # I do not know where to turn best yet
             else:
-                # Rapidly turn left
-                print("Turning rapidly to the left")
-                right_motor_speed.ChangeDutyCycle(50)
-                left_motor_speed.ChangeDutyCycle(10)
-                time.sleep(0.1)
+                right_motor_speed.ChangeDutyCycle(25)
+                left_motor_speed.ChangeDutyCycle(25)
+                avoid_obstacle()
 
             # Check for stuck condition
             if not is_stuck and distance <= SLIGHT_TURN:
@@ -181,7 +178,7 @@ def main():
                 distance = distance_measurement()
                 if abs(distance - previous_distance) < 2:  
                     if stuck_start_time == 0:
-                        print("Statring to count whether its stuck")
+                        print("Starting to count whether its stuck")
                         stuck_start_time = time.time()
 
                     # Check if the robot is stuck for too long

@@ -1,6 +1,5 @@
 import RPi.GPIO as GPIO
 import time
-import threading
 
 # better logic for getting stuck - current does not work in any way
 
