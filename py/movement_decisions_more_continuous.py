@@ -176,7 +176,27 @@ def main():
                 # Assuming that the distance requires finding a new path
                 right_motor_speed.ChangeDutyCycle(extensible_speed)
                 left_motor_speed.ChangeDutyCycle(extensible_speed)
-                avoid_obstacle()
+                move_backward()
+                direction = []
+
+                for path in range(4):
+                    right_motor_speed.ChangeDutyCycle(0)
+                    left_motor_speed.ChangeDutyCycle(0)
+                    distance = distance_measurement()
+                    # print("Distance: {} cm".format(distance))
+                    direction.append(distance)
+                    turn_left()
+                    right_motor_speed.ChangeDutyCycle(extensible_speed)
+                    left_motor_speed.ChangeDutyCycle(extensible_speed)
+
+                max_distance_position = direction.index(max(direction)) + 1
+
+                for longest_path in range(max_distance_position):
+                    right_motor_speed.ChangeDutyCycle(0)
+                    left_motor_speed.ChangeDutyCycle(0)
+                    turn_left()
+                    right_motor_speed.ChangeDutyCycle(extensible_speed)
+                    left_motor_speed.ChangeDutyCycle(extensible_speed)
 
             # # Check for stuck condition
             # if not is_stuck and distance <= SLIGHT_TURN:
