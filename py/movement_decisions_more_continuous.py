@@ -15,9 +15,9 @@ previous_distance = None
 STUCK_THRESHOLD = 2
 
 # Define distance thresholds for activating appropriate response speed
-RAPID_TURN = 7
-SLIGHT_TURN = 40
-POSSIBLY_STUCK = 2
+RAPID_TURN = 20
+SLIGHT_TURN = 50
+POSSIBLY_STUCK = 10
 extensible_speed = 25
 
 # right wheel
@@ -91,7 +91,7 @@ def distance_measurement():
     GPIO.setup(TRIG_RIGHT, GPIO.OUT)
     GPIO.setup(ECHO_RIGHT, GPIO.IN)
     GPIO.output(TRIG_RIGHT, False)
-    time.sleep(0.1)
+    time.sleep(1)
     GPIO.output(TRIG_RIGHT, True)
     time.sleep(0.0001)
     GPIO.output(TRIG_RIGHT, False)
@@ -142,14 +142,14 @@ def avoid_obstacle():
 def main():
     global is_stuck, stuck_start_time, previous_distance, extensible_speed
 
-    extensible_speed = 75
+    extensible_speed = 65
 
     try:
         while True:
             # avoid_obstacle()
-            # print("LOOP STARTED")
+            print("LOOP STARTED")
             distance = distance_measurement()
-            # print("Distance {}, moving forward".format(distance))
+            print("Distance {}, moving forward".format(distance))
             right_motor_speed.ChangeDutyCycle(extensible_speed)
             left_motor_speed.ChangeDutyCycle(extensible_speed)
             move_forward()
@@ -162,18 +162,19 @@ def main():
                 #     extensible_speed += 1
             elif RAPID_TURN < distance <= SLIGHT_TURN:
                 # Begin turning slightly to the right
-                # print("Dropping down the speed and going right (RAPID_TURN < distance <= SLIGHT_TURN)")
+                print("RIGHT Going right (RAPID_TURN < distance <= SLIGHT_TURN)")
                 right_motor_speed.ChangeDutyCycle(extensible_speed)
                 left_motor_speed.ChangeDutyCycle(extensible_speed+10)
                 # I do not know where to turn best yet
             elif POSSIBLY_STUCK < distance <= RAPID_TURN:
                 # Rapidly turn left
-                # print("Turning rapidly to the left")
+                print("LEFT Turning rapidly to the left")
                 right_motor_speed.ChangeDutyCycle(extensible_speed+20)
                 left_motor_speed.ChangeDutyCycle(extensible_speed)
                 time.sleep(0.1)
             else:
                 # Assuming that the distance requires finding a new path
+                print("AVOID Change of direction")
                 right_motor_speed.ChangeDutyCycle(extensible_speed)
                 left_motor_speed.ChangeDutyCycle(extensible_speed)
                 move_backward()
