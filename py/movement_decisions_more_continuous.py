@@ -1,9 +1,10 @@
 import RPi.GPIO as GPIO
 import time
 
-# pwm lower than 75 sometimes does not supply enough power
-# stuck logic does not work every time (mainly when both sensors are completely covered up) 
+# for now, it only executes else(avoiding_object) action despite having valid distance output
+# stuck logic does not work every time (mainly when both sensors are completely covered up)
 # it may turn too gently which causes it to poke objects with its wheels
+# pwm lower than 75 sometimes does not supply enough power
 
 # SETUP
 # Define the time threshold for stuck detection (in seconds)
