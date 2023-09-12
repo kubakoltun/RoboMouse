@@ -125,7 +125,7 @@ def avoid_obstacle():
 
     for path in range(4):
         distance = distance_measurement()
-        print("Distance: {} cm".format(distance))
+        # print("Distance: {} cm".format(distance))
         direction.append(distance)
         turn_left()
         time.sleep(0.1)
@@ -147,28 +147,28 @@ def main():
     try:
         while True:
             # avoid_obstacle()
-            print("LOOP STARTED")
+            # print("LOOP STARTED")
             distance = distance_measurement()
-            print("Distance {}, moving forward".format(distance))
+            # print("Distance {}, moving forward".format(distance))
             right_motor_speed.ChangeDutyCycle(extensible_speed)
             left_motor_speed.ChangeDutyCycle(extensible_speed)
             move_forward()
 
             if distance > SLIGHT_TURN:
-                print("Can proceed current movement (distance > SLIGHT_TURN)")
+                # print("Can proceed current movement (distance > SLIGHT_TURN)")
                 right_motor_speed.ChangeDutyCycle(extensible_speed)
                 left_motor_speed.ChangeDutyCycle(extensible_speed)
                 # if extensible_speed < 100:
                 #     extensible_speed += 1
             elif RAPID_TURN < distance <= SLIGHT_TURN:
                 # Begin turning slightly to the right
-                print("Dropping down the speed and going right (RAPID_TURN < distance <= SLIGHT_TURN)")
+                # print("Dropping down the speed and going right (RAPID_TURN < distance <= SLIGHT_TURN)")
                 right_motor_speed.ChangeDutyCycle(extensible_speed)
                 left_motor_speed.ChangeDutyCycle(extensible_speed+10)
                 # I do not know where to turn best yet
             elif POSSIBLY_STUCK < distance <= RAPID_TURN:
                 # Rapidly turn left
-                print("Turning rapidly to the left")
+                # print("Turning rapidly to the left")
                 right_motor_speed.ChangeDutyCycle(extensible_speed+20)
                 left_motor_speed.ChangeDutyCycle(extensible_speed)
                 time.sleep(0.1)
