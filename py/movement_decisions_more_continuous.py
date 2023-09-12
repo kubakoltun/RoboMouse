@@ -1,9 +1,7 @@
 import RPi.GPIO as GPIO
 import time
 
-# for now, it only executes else(avoiding_object) action despite having valid distance output
-# its because the program stops responding after minute
-# stuck logic does not work every time (mainly when both sensors are completely covered up)
+# stuck logic does not work every time (mainly when sensor is completely covered up)
 # it may turn too gently which causes it to poke objects with its wheels
 # pwm lower than 75 sometimes does not supply enough power
 
@@ -91,7 +89,7 @@ def distance_measurement():
     GPIO.setup(TRIG_RIGHT, GPIO.OUT)
     GPIO.setup(ECHO_RIGHT, GPIO.IN)
     GPIO.output(TRIG_RIGHT, False)
-    time.sleep(1)
+    time.sleep(1.5)
     GPIO.output(TRIG_RIGHT, True)
     time.sleep(0.0001)
     GPIO.output(TRIG_RIGHT, False)
@@ -120,21 +118,27 @@ def distance_measurement():
 # MANEUVERS
 def avoid_obstacle():
     move_backward()
-    time.sleep(0.5)
+    time.sleep(0.15)
     direction = []
 
     for path in range(4):
+        right_motor_speed.ChangeDutyCycle(0)
+        left_motor_speed.ChangeDutyCycle(0)
         distance = distance_measurement()
-        # print("Distance: {} cm".format(distance))
+        print(f"Distance: {distance} cm, from range: {range}")
         direction.append(distance)
         turn_left()
-        time.sleep(0.1)
+        right_motor_speed.ChangeDutyCycle(extensible_speed)
+        left_motor_speed.ChangeDutyCycle(extensible_speed)
+        time.sleep(0.03)
 
     max_distance_position = direction.index(max(direction))+1
 
     for longest_path in range(max_distance_position):
+        right_motor_speed.ChangeDutyCycle(extensible_speed)
+        left_motor_speed.ChangeDutyCycle(extensible_speed)
         turn_left()
-        time.sleep(0.1)
+        time.sleep(0.03)
 # MANEUVERS
 
 
@@ -177,10 +181,11 @@ def main():
                 print("AVOID Change of direction")
                 right_motor_speed.ChangeDutyCycle(extensible_speed)
                 left_motor_speed.ChangeDutyCycle(extensible_speed)
-                move_backward()
-                time.sleep(0.5)
-                turn_right()
-                time.sleep(0.5)
+                avoid_obstacle()
+                #move_backward()
+                #time.sleep(0.5)
+                #turn_right()
+                #time.sleep(0.03)
                 # direction = []
 
                 # for path in range(4):
