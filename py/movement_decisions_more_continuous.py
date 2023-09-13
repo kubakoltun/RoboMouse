@@ -1,10 +1,6 @@
 import RPi.GPIO as GPIO
 import time
 
-# stuck logic does not work every time (mainly when sensor is completely covered up)
-# it may turn too gently which causes it to poke objects with its wheels
-# pwm lower than 75 sometimes does not supply enough power
-
 # SETUP
 # Define the time threshold for stuck detection (in seconds)
 stuck_start_time = 0
@@ -16,7 +12,7 @@ STUCK_THRESHOLD = 2
 RAPID_TURN = 20
 SLIGHT_TURN = 50
 POSSIBLY_STUCK = 6
-extensible_speed = 25
+extensible_speed = 65
 
 # right wheel
 IN1A = 25
@@ -177,7 +173,7 @@ def main():
                 time.sleep(0.1)
             else:
                 # Assuming that the distance requires finding a new path
-                print("AVOID Change of direction")
+                print("Look for a better PATH")
                 right_motor_speed.ChangeDutyCycle(extensible_speed)
                 left_motor_speed.ChangeDutyCycle(extensible_speed)
                 avoid_obstacle()
