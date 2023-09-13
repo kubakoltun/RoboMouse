@@ -85,7 +85,7 @@ def distance_measurement():
     GPIO.setup(TRIG_RIGHT, GPIO.OUT)
     GPIO.setup(ECHO_RIGHT, GPIO.IN)
     GPIO.output(TRIG_RIGHT, False)
-    time.sleep(1.5)
+    time.sleep(2)
     GPIO.output(TRIG_RIGHT, True)
     time.sleep(0.0001)
     GPIO.output(TRIG_RIGHT, False)
@@ -114,7 +114,7 @@ def distance_measurement():
 # MANEUVERS
 def avoid_obstacle():
     move_backward()
-    time.sleep(0.4)
+    time.sleep(0.3)
     direction = []
 
     for path in range(4):
@@ -126,7 +126,7 @@ def avoid_obstacle():
         turn_left()
         right_motor_speed.ChangeDutyCycle(extensible_speed)
         left_motor_speed.ChangeDutyCycle(extensible_speed)
-        time.sleep(0.1)
+        time.sleep(0.5)
 
     max_distance_position = direction.index(max(direction))+1
 
@@ -134,7 +134,7 @@ def avoid_obstacle():
         right_motor_speed.ChangeDutyCycle(extensible_speed)
         left_motor_speed.ChangeDutyCycle(extensible_speed)
         turn_left()
-        time.sleep(0.1)
+        time.sleep(0.5)
 # MANEUVERS
 
 
