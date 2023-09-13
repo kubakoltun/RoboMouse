@@ -128,6 +128,9 @@ def avoid_obstacle():
     max_distance_position = direction.index(max(direction))+1
 
     for longest_path in range(max_distance_position):
+        right_motor_speed.ChangeDutyCycle(0)
+        left_motor_speed.ChangeDutyCycle(0)
+        time.sleep(2)
         right_motor_speed.ChangeDutyCycle(extensible_speed)
         left_motor_speed.ChangeDutyCycle(extensible_speed)
         turn_left()
