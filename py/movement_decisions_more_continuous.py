@@ -121,7 +121,7 @@ def avoid_obstacle():
         right_motor_speed.ChangeDutyCycle(0)
         left_motor_speed.ChangeDutyCycle(0)
         distance = distance_measurement()
-        print(f"Distance: {distance} cm, from range: {range}")
+        print(f"Distance: {distance} cm, from path: {path}")
         direction.append(distance)
         turn_left()
         right_motor_speed.ChangeDutyCycle(extensible_speed)
