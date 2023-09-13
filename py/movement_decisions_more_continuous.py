@@ -15,7 +15,7 @@ STUCK_THRESHOLD = 2
 # Define distance thresholds for activating appropriate response speed
 RAPID_TURN = 20
 SLIGHT_TURN = 50
-POSSIBLY_STUCK = 10
+POSSIBLY_STUCK = 6
 extensible_speed = 25
 
 # right wheel
@@ -118,7 +118,7 @@ def distance_measurement():
 # MANEUVERS
 def avoid_obstacle():
     move_backward()
-    time.sleep(0.15)
+    time.sleep(0.4)
     direction = []
 
     for path in range(4):
@@ -130,7 +130,7 @@ def avoid_obstacle():
         turn_left()
         right_motor_speed.ChangeDutyCycle(extensible_speed)
         left_motor_speed.ChangeDutyCycle(extensible_speed)
-        time.sleep(0.03)
+        time.sleep(0.1)
 
     max_distance_position = direction.index(max(direction))+1
 
@@ -138,7 +138,7 @@ def avoid_obstacle():
         right_motor_speed.ChangeDutyCycle(extensible_speed)
         left_motor_speed.ChangeDutyCycle(extensible_speed)
         turn_left()
-        time.sleep(0.03)
+        time.sleep(0.1)
 # MANEUVERS
 
 
@@ -159,20 +159,19 @@ def main():
             move_forward()
 
             if distance > SLIGHT_TURN:
-                # print("Can proceed current movement (distance > SLIGHT_TURN)")
                 right_motor_speed.ChangeDutyCycle(extensible_speed)
                 left_motor_speed.ChangeDutyCycle(extensible_speed)
                 # if extensible_speed < 100:
                 #     extensible_speed += 1
             elif RAPID_TURN < distance <= SLIGHT_TURN:
                 # Begin turning slightly to the right
-                print("RIGHT Going right (RAPID_TURN < distance <= SLIGHT_TURN)")
+                print("Going RIGHT")
                 right_motor_speed.ChangeDutyCycle(extensible_speed)
                 left_motor_speed.ChangeDutyCycle(extensible_speed+10)
                 # I do not know where to turn best yet
             elif POSSIBLY_STUCK < distance <= RAPID_TURN:
                 # Rapidly turn left
-                print("LEFT Turning rapidly to the left")
+                print("Turning rapidly to the LEFT")
                 right_motor_speed.ChangeDutyCycle(extensible_speed+20)
                 left_motor_speed.ChangeDutyCycle(extensible_speed)
                 time.sleep(0.1)
@@ -182,33 +181,9 @@ def main():
                 right_motor_speed.ChangeDutyCycle(extensible_speed)
                 left_motor_speed.ChangeDutyCycle(extensible_speed)
                 avoid_obstacle()
-                #move_backward()
-                #time.sleep(0.5)
-                #turn_right()
-                #time.sleep(0.03)
-                # direction = []
 
-                # for path in range(4):
-                #     right_motor_speed.ChangeDutyCycle(0)
-                #     left_motor_speed.ChangeDutyCycle(0)
-                #     distance = distance_measurement()
-                #     # print("Distance: {} cm".format(distance))
-                #     direction.append(distance)
-                #     turn_left()
-                #     right_motor_speed.ChangeDutyCycle(extensible_speed)
-                #     left_motor_speed.ChangeDutyCycle(extensible_speed)
-                #
-                # max_distance_position = direction.index(max(direction)) + 1
-                #
-                # for longest_path in range(max_distance_position):
-                #     right_motor_speed.ChangeDutyCycle(0)
-                #     left_motor_speed.ChangeDutyCycle(0)
-                #     turn_left()
-                #     right_motor_speed.ChangeDutyCycle(extensible_speed)
-                #     left_motor_speed.ChangeDutyCycle(extensible_speed)
-
-            # # Check for stuck condition
-            # if not is_stuck and distance <= SLIGHT_TURN:
+            # # Check whether its stuck
+            # if not is_stuck:
             #     if previous_distance is None:
             #         previous_distance = distance
             #
@@ -227,8 +202,6 @@ def main():
             #             print("Recover - back")
             #             move_backward()
             #             time.sleep(0.5)
-            #
-            #             # Turn left to attempt to get unstuck
             #             print("Recover - left")
             #             turn_left()
             #             time.sleep(0.1)
