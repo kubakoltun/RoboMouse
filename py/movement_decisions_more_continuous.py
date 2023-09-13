@@ -98,15 +98,12 @@ def distance_measurement():
     while GPIO.input(ECHO_RIGHT) == 1:
         pulse_end = time.time()
 
-    if (pulse_start is None) or (pulse_start == 0):
-        return 0
-
-    if (pulse_end is None) or (pulse_end == 0):
-        return 0
-
     pulse_duration = pulse_end - pulse_start
     distance = pulse_duration * 17150
     distance = round(distance, 2)
+
+    if distance in None:
+        return 0
     return distance
 # DISTANCE MEASUREMENT
 

@@ -23,14 +23,11 @@ while GPIO.input(ECHO_RIGHT) == 0:
 while GPIO.input(ECHO_RIGHT) == 1:
 	pulse_end = time.time()
 
-# if (pulse_start is None) or (pulse_start == 0):
-# 	print(0)
-#
-# if (pulse_end is None) or (pulse_end == 0):
-# 	print(0)
-
 pulse_duration = pulse_end - pulse_start
 distance = pulse_duration * 17150
 distance = round(distance, 2)
+
+if distance in None:
+	print(0)
 print(distance)
 # DISTANCE MEASUREMENT

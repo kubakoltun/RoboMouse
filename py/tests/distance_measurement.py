@@ -18,6 +18,8 @@ GPIO.output(trig_right, True)
 time.sleep(0.00001)
 GPIO.output(trig_right, False)
 
+pulse_start = 0
+pulse_end = 0
 
 while GPIO.input(echo_right) == 0:
 	pulse_start = time.time()
