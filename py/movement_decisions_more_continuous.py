@@ -35,6 +35,9 @@ GPIO.setup(ENA, GPIO.OUT)
 GPIO.setup(IN3B, GPIO.OUT)
 GPIO.setup(IN4B, GPIO.OUT)
 GPIO.setup(ENB, GPIO.OUT)
+# sensor
+GPIO.setup(TRIG_RIGHT, GPIO.OUT)
+GPIO.setup(ECHO_RIGHT, GPIO.IN)
 
 right_motor_speed = GPIO.PWM(ENA, 500)
 right_motor_speed.start(0)
@@ -82,12 +85,10 @@ def stop():
 
 # DISTANCE MEASUREMENT
 def distance_measurement():
-    GPIO.setup(TRIG_RIGHT, GPIO.OUT)
-    GPIO.setup(ECHO_RIGHT, GPIO.IN)
     GPIO.output(TRIG_RIGHT, False)
-    time.sleep(2)
+    time.sleep(0.5)
     GPIO.output(TRIG_RIGHT, True)
-    time.sleep(0.0001)
+    time.sleep(0.00001)
     GPIO.output(TRIG_RIGHT, False)
 
     pulse_start = 0
@@ -102,7 +103,7 @@ def distance_measurement():
     distance = pulse_duration * 17150
     distance = round(distance, 2)
 
-    if distance in None:
+    if distance is None:
         return 0
     return distance
 # DISTANCE MEASUREMENT
