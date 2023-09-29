@@ -131,23 +131,24 @@ def avoid_obstacle():
     for longest_path in range(max_distance_position):
         right_motor_speed.ChangeDutyCycle(0)
         left_motor_speed.ChangeDutyCycle(0)
-        time.sleep(2)
+        time.sleep(0.5)
         right_motor_speed.ChangeDutyCycle(extensible_speed)
         left_motor_speed.ChangeDutyCycle(extensible_speed)
         turn_left()
         time.sleep(0.5)
+
+    return
 # MANEUVERS
 
 
 # MOVEMENT
 def main():
-    global is_stuck, stuck_start_time, previous_distance, extensible_speed
-
-    extensible_speed = 65
+    global is_stuck, stuck_start_time, previous_distance
+    has_been_avoided = -1
 
     try:
         while True:
-            # avoid_obstacle()
+            has_been_avoided += 1
             print("LOOP STARTED")
             distance = distance_measurement()
             print("Distance {}, moving forward".format(distance))
@@ -172,12 +173,17 @@ def main():
                 right_motor_speed.ChangeDutyCycle(extensible_speed+20)
                 left_motor_speed.ChangeDutyCycle(extensible_speed)
                 time.sleep(0.1)
-            else:
+            elif has_been_avoided % 10 == 0:
                 # Assuming that the distance requires finding a new path
+                has_been_avoided = 0
                 print("Look for a better PATH")
                 right_motor_speed.ChangeDutyCycle(extensible_speed)
                 left_motor_speed.ChangeDutyCycle(extensible_speed)
                 avoid_obstacle()
+            else:
+                right_motor_speed.ChangeDutyCycle(extensible_speed)
+                left_motor_speed.ChangeDutyCycle(extensible_speed+20)
+                time.sleep(0.1)
 
             # # Check whether its stuck
             # if not is_stuck:
