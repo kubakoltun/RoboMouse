@@ -5,7 +5,7 @@
 #include <chrono>
 
 // SETUP
-const int stuck_threshold = 2; // in seconds
+const int stuck_threshold = 2; 
 unsigned int stuck_start_time = 0;
 bool is_stuck = false;
 float previous_distance = 0;
