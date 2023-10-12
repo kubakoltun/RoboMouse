@@ -89,8 +89,8 @@ void avoid_obstacle() {
         turn_left();
         delay(100);
     }
-
     int max_distance_index = 0;
+    
     for (int i = 1; i < 5; i++) {
         if (direction[i] > direction[max_distance_index]) {
             max_distance_index = i;
@@ -125,10 +125,12 @@ int main() {
         while (true) {
             avoid_obstacle();
             float distance = distance_measurement();
+
             if (distance > MAX_DISTANCE) {
                 is_stuck = false;
                 move_forward();
-            } else if (MIN_DISTANCE < distance && distance <= MAX_DISTANCE) {
+            } 
+            else if (MIN_DISTANCE < distance && distance <= MAX_DISTANCE) {
                 is_stuck = false;
                 avoid_obstacle();
             } else {
