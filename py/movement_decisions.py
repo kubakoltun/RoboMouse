@@ -1,8 +1,6 @@
 import RPi.GPIO as GPIO
 import time
 
-# better logic for getting stuck - current does not work in any way
-
 # SETUP
 # Define the time threshold for stuck detection (in seconds)
 stuck_start_time = 0
