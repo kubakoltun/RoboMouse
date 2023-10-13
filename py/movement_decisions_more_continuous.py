@@ -148,7 +148,7 @@ def main():
 
     try:
         while True:
-            has_been_avoided += 1
+            has_been_avoided = has_been_avoided+1
             print("LOOP STARTED")
             distance = distance_measurement()
             print("Distance {}, moving forward".format(distance))
@@ -161,13 +161,13 @@ def main():
                 left_motor_speed.ChangeDutyCycle(extensible_speed)
                 # if extensible_speed < 100:
                 #     extensible_speed += 1
-            elif RAPID_TURN < distance <= SLIGHT_TURN:
+            elif RAPID_TURN < distance and distance <= SLIGHT_TURN:
                 # Begin turning slightly to the right
                 print("Going RIGHT")
                 right_motor_speed.ChangeDutyCycle(extensible_speed)
                 left_motor_speed.ChangeDutyCycle(extensible_speed+10)
                 # I do not know where to turn best yet
-            elif POSSIBLY_STUCK < distance <= RAPID_TURN:
+            elif POSSIBLY_STUCK < distance and distance <= RAPID_TURN:
                 # Rapidly turn left
                 print("Turning rapidly to the LEFT")
                 right_motor_speed.ChangeDutyCycle(extensible_speed+20)
@@ -217,7 +217,7 @@ def main():
             #         previous_distance = distance
 
     except KeyboardInterrupt:
-        print("Program terminated by user.")
+        print("Program terminated by the user.")
     finally:
         GPIO.cleanup()
 
