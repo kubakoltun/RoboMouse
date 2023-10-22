@@ -1,14 +1,19 @@
 #include <NewPing.h>
 #include <AFMotor.h>
 
+// sensore
 #define TRIG_PIN 5
 #define ECHO_PIN 6
+
+// right wheel
 #define ENA 12
 #define IN1A 25
 #define IN2A 23
+// left wheel
 #define IN3B 17
 #define IN4B 27
 #define ENB 13
+
 #define RAPID_TURN 20
 #define SLIGHT_TURN 50
 #define POSSIBLY_STUCK 6
