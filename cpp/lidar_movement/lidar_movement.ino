@@ -9,7 +9,6 @@ const int m1_pin1 = 11;
 const int m1_pin2 = 10;
 const int m1_enb = 9;
 
-
 #define FORWARD  (0)
 #define BACKWARD  (1)
 #define SPIN_LEFT  (2)
@@ -445,7 +444,6 @@ void loop(void) {
           }
         }
       }
-      //dump(p_rx_buffer->data,p_rx_buffer->index-1);
     }
   }
 }
