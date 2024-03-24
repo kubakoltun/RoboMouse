@@ -53,6 +53,7 @@ void turn_left() {
   motor2.run(FORWARD);
 }
 
+// arg
 void turn_right() {
   motor1.setSpeed(global_pwm_speed);
   motor2.setSpeed(global_pwm_speed);
@@ -105,17 +106,20 @@ void loop() {
       motor1.setSpeed(extensible_speed);
       motor2.setSpeed(extensible_speed);
       move_forward();
-    } else if (RAPID_TURN < distance && distance <= SLIGHT_TURN) {
+    } 
+    else if (RAPID_TURN < distance && distance <= SLIGHT_TURN) {
       // Begin turning slightly to the right
       motor1.setSpeed(extensible_speed);
       motor2.setSpeed(extensible_speed + 10);
       turn_right();
-    } else if (POSSIBLY_STUCK < distance && distance <= RAPID_TURN) {
+    } 
+    else if (POSSIBLY_STUCK < distance && distance <= RAPID_TURN) {
       // Rapidly turn left
       motor1.setSpeed(extensible_speed + 20);
       motor2.setSpeed(extensible_speed);
       delay(100);
-    } else if (has_been_avoided % 10 == 0) {
+    } 
+    else if (has_been_avoided % 10 == 0) {
       // Assuming that the distance requires finding a new path
       has_been_avoided = 0;
       avoid_obstacle();
