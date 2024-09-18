@@ -19,6 +19,8 @@ int extensible_speed = 65;
 const int RAPID_TURN = 30;
 const int SLIGHT_TURN = 80;
 const int POSSIBLY_STUCK = 6;
+const int NUM_MEASUREMENTS = 9;
+
 
 int possibly_stuck_counter = 0;
  
@@ -40,29 +42,26 @@ void loop() {
     int distance = distance_measurement();
     delay(200);
 
-    // the path is free - i can gain speed
+    // The path is free - i can gain speed
     if (distance > SLIGHT_TURN) {
-      move_forward(global_pwm_speed, global_pwm_speed);
+      move_forward(global_pwm_speed, global_pwm_speed); 
     } 
-    // obsticle not so far away - performing a SLIGHT TURN
     else if (RAPID_TURN < distance && distance <= SLIGHT_TURN) {
-      move_forward(global_pwm_speed, global_pwm_speed+10);
+      // Slow down as it gets closer
+      int slow_speed = map(distance, RAPID_TURN, SLIGHT_TURN, 100, global_pwm_speed);  
+      move_forward(slow_speed, slow_speed + 10);
     } 
-    // obsticle pretty close - prefoming a RAPID TURN
-    else if (POSSIBLY_STUCK < distance && distance <= RAPID_TURN) {
-      avoid_obstacle();
-    } 
-    // else {
-    //   move_forward(global_pwm_speed-10, global_pwm_speed-10);
-    //   delay(100);
-    // }
+    else if (distance <= RAPID_TURN) {
+      avoid_obstacle();  
+    }
 
+    // todo it does not react if the distance is the same for too long
     if (distance <= POSSIBLY_STUCK) {
       possibly_stuck_counter++;
       if (possibly_stuck_counter >= 4) {
         possibly_stuck_counter = 0;
         move_backward(global_pwm_speed, global_pwm_speed);
-        delay(500);
+        delay(800);
         avoid_obstacle();
       }
     }
@@ -82,30 +81,53 @@ int distance_measurement() {
 }
 
 void avoid_obstacle() {
-  stop();
-  int max_distance_position = 1;
-  int max_distance = distance_measurement();
-  delay(200);
+    stop();  
 
-  for (int path = 2; path <= 4; path++) {
-    // it makes a turn which is about 30 degrees
-    turn_left(global_pwm_speed, global_pwm_speed);
-    delay(100);
-    stop();
-    delay(200);
-    int distance = distance_measurement();
-    delay(200);
+    int distances[NUM_MEASUREMENTS];
+    int max_distance = 0;
+    int max_index = 0;
 
-    if (distance > max_distance) {
-      max_distance = distance;
-      max_distance_position = path;
+    // Perform about 360-degree turn with measurements at each step
+    for (int i = 0; i < NUM_MEASUREMENTS; i++) {
+        // Measure the distance at current angle
+        distances[i] = distance_measurement();  
+        // Allow time for the sensor to stabilize
+        delay(300);  
+
+        // Record the best distance and its index
+        if (distances[i] > max_distance) {
+            max_distance = distances[i];
+            max_index = i;
+        }
+
+        // Turn left slightly (40 degrees)
+        turn_left(global_pwm_speed, global_pwm_speed);
+        delay(250);  
+        stop();
+        delay(100);  
     }
-  }
 
-  if (max_distance_position != 4) {
-    turn_left(global_pwm_speed, global_pwm_speed);
-    delay(100*max_distance_position);
-  }
+    // Now, turn to face the direction with the maximum distance
+    int angle_to_turn = max_index * 40; 
+
+    // If the best path is to the left (less than 180 degrees), turn left
+    if (angle_to_turn <= 180) {
+        turn_left(global_pwm_speed, global_pwm_speed);
+        // Map angle to time (adjust based on testing)
+        delay(map(angle_to_turn, 0, 180, 0, 1500));  
+    } 
+    // If the best path is to the right (more than 180 degrees), turn right instead
+    else {
+        turn_right(global_pwm_speed, global_pwm_speed);
+        // Turn right for the remaining angle
+        delay(map(360 - angle_to_turn, 0, 180, 0, 1500));  
+    }
+
+    stop();  
+
+    // Move forward after turning to the best direction
+    move_forward(global_pwm_speed, global_pwm_speed);
+    delay(500); 
 }
 
 void move_forward(int speedA, int speedB) {
