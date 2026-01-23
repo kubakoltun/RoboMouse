@@ -1,6 +1,3 @@
-// TODO - the stuck response is almost never called
-// TODO - maybe a platform to simulate this code would be nice
-
 // Sensor
 int TRIG_PIN = 5;  
 int ECHO_PIN = 6;  
